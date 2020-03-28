@@ -13,11 +13,7 @@
                     type: 'line',
                     data: {
                         labels: data.labels,
-                        datasets: [{
-                            label: 'fever',
-                            borderColor: 'yellow',
-                            data: data.measure_fever
-                        },
+                        datasets: [
                         {
                             label: 'max_fever',
                             borderColor: 'red',
@@ -27,6 +23,11 @@
                             label: 'min_fever',
                             borderColor: 'green',
                             data: data.measure_fever_min
+                        },
+                        {
+                            label: 'threshold',
+                            borderColor: 'yellow',
+                            data: data.threshold
                         }]
                     },
                     options: {
@@ -35,7 +36,7 @@
                             position: 'top',
                         },
                         title: {
-                            display: true,
+                            display: false,
                             text: 'Fever'
                         }
                     }
@@ -54,10 +55,6 @@
                 <div id="container" style="width: 50%;">
                     <canvas id="population-chart" data-url="{% url 'population-chart' %}"></canvas>
                 </div>
-
-                  <script>
-
-                  </script>
             </section>
         </div>
         <div class="col-md-6">
@@ -96,12 +93,6 @@
             <th>Running Nose:</th>
             {% for data_point in measurement %}
                 <td>{{ data_point.running_nose }}</td>
-              {% endfor %}
-          </tr>
-          <tr>
-            <th>Stay Home:</th>
-              {% for data_point in measurement %}
-                <td>{{ data_point.stay_home }}</td>
               {% endfor %}
           </tr>
         </table>

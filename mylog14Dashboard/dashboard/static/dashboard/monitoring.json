@@ -1,10 +1,5 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-import json
-
-# Create your views here.
-# replace by JSON file that will be read in
-monitoring_data = [
+{
+    "observations": [
         {
             "user_pub_key": "9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99",
             "timestamp": 1585412837, 
@@ -53,32 +48,5 @@ monitoring_data = [
             "running_nose": 0,
             "equipment": "forehead"
         }
-]
-
-def home(request):
-    context = {
-        'measurement': monitoring_data
-    }
-    return render(request, 'dashboard/dashboard.html', context)
-
-
-def population_chart(request):
-    CRITICAL_TEMP = 37.5
-    critical_line = []
-
-    labels = [d['timestamp'] for d in monitoring_data]
-    for d in monitoring_data:
-        critical_line.append(CRITICAL_TEMP)
-
-    measurements_max = [d['body_temperature'] for d in monitoring_data]
-    measurements_min = [d['body_temperature'] for d in monitoring_data]
-
-    return JsonResponse(data={
-        'labels': labels,
-        'measure_fever_max': measurements_max,
-        'measure_fever_min': measurements_min,
-        'threshold': critical_line
-    })
-
-def test(request):
-    return render(request, 'dashboard/test.html')
+    ]
+}
