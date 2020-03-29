@@ -1,98 +1,67 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+"""
+from rest_framework.views import APIView
+from rest_framework.response import Response
+"""
 from datetime import datetime
+import pandas as pd
 import requests
+from . import models
 
-def get_data():
-    #Dummy Data to be replaced
-    monitoring_data = [
-        {
-            "user_pub_key": "9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99",
-            "timestamp": 1585412837, 
-            "latitude": 24.953606,
-            "longitute": 121.4095702,
-            "stay_home": 1,
-            "image_cid": "QmTddVonVQszEX141sTLpc3sj2uzujDrtp6JXzTjKz8tGf",
-            "body_temperature": 36.5,
-            "coughing": 0,
-            "running_nose": 1,
-            "equipment": "forehead"
-        },
-        {
-            "user_pub_key": "9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99",
-            "timestamp": 1585391249, 
-            "latitude": 24.953606,
-            "longitute": 121.4095702,
-            "stay_home": 1,
-            "image_cid": "QmWLsWkcpeYBFJtvzGrdp9KH8LjZM4z5oATDqRAu13hNnF",
-            "body_temperature": 37.3,
-            "coughing": 1,
-            "running_nose": 1,
-            "equipment": "forehead"
-        },
-        {
-            "user_pub_key": "9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99",
-            "timestamp":  	1585362464, 
-            "latitude": 24.969977,
-            "longitute": 121.4013523,
-            "stay_home": 0,
-            "image_cid": "",
-            "body_temperature": 37.3,
-            "coughing": 1,
-            "running_nose": 1,
-            "equipment": "forehead"
-        },
-        {
-            "user_pub_key": "9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99",
-            "timestamp":  1585408843, 
-            "latitude": 24.953606,
-            "longitute": 121.4095702,
-            "stay_home": 0,
-            "image_cid": "",
-            "body_temperature": 37.0,
-            "coughing": 0,
-            "running_nose": 0,
-            "equipment": "forehead"
-        }
-    ]   
-    return monitoring_data
+#Constant for the yellow threshhold line
+CRITICAL_TEMP  = 37.5
 
-
-
-# Create your views here.
 def home(request):
-    data = get_data()
-    updated_data = data
+    monitoring_data = pd.DataFrame(models.load_CID_data())
     context = {
-        'measurement': updated_data,
-        'timestamps': [datetime.fromtimestamp(d['timestamp']).date() for d in data]
-        
+        #TODO 000 check with the DJANGO Template functions how to get nested Values and Format the Timestamps properly
+        #TODO 001 Aggregate the days in a dataframe e.g. all timestamps of a specific day get the max temp. and min. temp
+        'timestamps': monitoring_data['timestamp'],
+        'body_temp': monitoring_data['body_temperature'],
+        'body_temp_max': monitoring_data['body_temperature'],
+        'body_temp_min': monitoring_data['body_temperature'],
+        'coughing': monitoring_data['coughing'],
+        'running_nose': monitoring_data['running_nose'],
     }
     return render(request, 'dashboard/dashboard.html', context)
 
-
+#TODO  003 Fix the display issue with the chart, by implementing the restful API
 def population_chart(request):
-    data =  get_data()
-    
-    timestamps = [d['timestamp'] for d in data]
-    measurements_fever = [d['body_temperature'] for d in data]
+    monitoring_data = pd.DataFrame(models.load_CID_data())
+    monitoring_data['critical_temp'] = CRITICAL_TEMP
 
-    first_day = min(timestamps)
-    labels = timestamps
+    #TODO: 002 Implement the aggregation by day, to find the max and min body_temp of the days
+    chart_df = monitoring_data[['timestamp', 'body_temperature', 'critical_temp']]
 
-    measurements_max = []
-    measurements_min = []
+    data = {
+        'timestamps': chart_df['timestamp'],
+        'body_temp': chart_df['body_temperature'],
+        'body_temp_max': chart_df['body_temperature'],
+        'body_temp_min': chart_df['body_temperature'],
+        'body_temp_critical': chart_df['critical_temp'],
+    }
 
-    for measurement in measurements_fever:
-        measurements_max.append(max(measurements_fever))
-        measurements_min.append(min(measurements_fever))
-        
-    critical_line = [37.5, 37.5, 37.5]
+    return JsonResponse(data)
 
-    return JsonResponse(data={
-        'labels': labels,
-        'measure_fever_max': measurements_max,
-        'measurement_fever': measurements_fever,
-        'measure_fever_min': measurements_min,
-        'threshold': critical_line
-    })
+#TODO: Use Restful API to communicate with the chart as indicated in 003
+""" class ChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, format=None):
+
+        monitoring_data = pd.DataFrame(models.load_CID_data())
+        monitoring_data['critical_temp'] = CRITICAL_TEMP
+
+        #TODO: 002 Implement the aggregation by day, to find the max and min body_temp of the days
+        chart_df = monitoring_data[['timestamp', 'body_temperature', 'critical_temp']]
+
+        data = {
+            'timestamps': chart_df['timestamp'],
+            'body_temp': chart_df['body_temperature'],
+            'body_temp_max': chart_df['body_temperature'],
+            'body_temp_min': chart_df['body_temperature'],
+            'body_temp_critical': chart_df['critical_temp'],
+        }
+        return Response(data) """

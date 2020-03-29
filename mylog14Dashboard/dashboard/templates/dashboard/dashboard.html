@@ -1,55 +1,57 @@
 {% extends "dashboard/base.html" %}
+
 {% block javascript %}
 <script>
-$(function () {
-    var $populationChart = $("#population-chart");
-    $.ajax({
-        url: $populationChart.data("url"),
-        success: function (data) {
-
-            var ctx = $populationChart[0].getContext("2d");
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [
-                    {
-                        label: 'max_fever',
-                        borderColor: 'red',
-                        data: data.measure_fever_max
+    $(function () {
+        var $populationChart = $("#population-chart");
+        $.ajax({
+            url: $populationChart.data("url"),
+            success: function (data) {
+    
+                var ctx = $populationChart[0].getContext("2d");
+                var my_data = "{{ monitoring_data }}"
+    
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: "{{ timestamp }}}",
+                        datasets: [
+                        {
+                            label: 'max_fever',
+                            borderColor: 'red',
+                            data: data.measure_fever_max
+                        },
+                        {
+                            label: 'measurement',
+                            borderColor: 'black',
+                            data: data.measure_fever_min
+                        },
+                        {
+                            label: 'min_fever',
+                            borderColor: 'green',
+                            data: data.measure_fever_min
+                        },
+                        {
+                            label: 'threshold',
+                            borderColor: 'yellow',
+                            data: data.threshold
+                        }]
                     },
-                    {
-                        label: 'measurement',
-                        borderColor: 'black',
-                        data: data.measure_fever_min
-                    },
-                    {
-                        label: 'min_fever',
-                        borderColor: 'green',
-                        data: data.measure_fever_min
-                    },
-                    {
-                        label: 'threshold',
-                        borderColor: 'yellow',
-                        data: data.threshold
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: false,
-                        text: 'Fever'
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false,
+                            text: 'Fever'
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     });
-});
-</script>
+    </script>
 <script>
 
 //DUMMY DATA TO BE REPLACED WITH AJAX CALL
@@ -121,6 +123,7 @@ mymap.on('click', onMapClick);
             <div class="col-sm-4 bg-light"><div id="mapid"></div></div>
         </div>
     </div>
+    <!-- This Section is for the Data Table, it should be more or less fine -->
     <div id="section2" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
         <h1>Data Row</h1>
         <div class="row">
@@ -128,49 +131,53 @@ mymap.on('click', onMapClick);
             <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
               <tr>
                 <th>Timestamp:</th>
-                  {% for datetime in timestamps %}
-                    <td>{{ datetime }}</td>
+                  {% for x in timestamps %}
+                    <td>{{ x }}</td>
                   {% endfor %}
               </tr>
               <tr>
                 <th>Body Temperature C(max):</th>
-                  {% for data_point in measurement %}
-                    <td>{{ data_point.body_temperature }}</td>
+                  {% for temperature in body_temp_max %}
+                    <td>{{ temperature }}</td>
                   {% endfor %}
               </tr>
               <tr>
                 <th>Body Temperature C(min):</th>
-                {% for data_point in measurement %}
-                    <td>{{ data_point.body_temperature }}</td>
+                {% for temperature in body_temp_min %}
+                    <td>{{ temperature }}</td>
                   {% endfor %}
               </tr>
                 <tr>
                 <th>Coughing:</th>
-                {% for data_point in measurement %}
-                    <td>{{ data_point.coughing }}</td>
-                  {% endfor %}
+                {% for symptom in coughing %}
+                    <td>{{ symptom }}</td>
+                {% endfor %}
               </tr>
                 <tr>
                 <th>Running Nose:</th>
-                {% for data_point in measurement %}
-                    <td>{{ data_point.running_nose }}</td>
-                  {% endfor %}
+                {% for symptom in running_nose %}
+                    <td>{{ symptom }}</td>
+                {% endfor %}
               </tr>
             </table>
             </div>
         </div>
     </div>
+    <!-- This section needs some revision on the creation of cards, I haven't figured yet how to do nested information
+        e.g. each observation has a data, hour, an image hash for retrieval on IPFS, and a location indication propably need to create a nestef for loop or something:
+          https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#if -->
+
     <div id="section3" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
         <h1>Pictures Row</h1>
         <div class="row">
-            {% for data_point in measurement %}
+            {% for datetime in timestamps %}
                 <div class="card" style="width:400px">
-                    <div class="card-header">{{ data_point.timestamp }}</div>
-                    <img class="card-img-top" src="https://gateway.pinata.cloud/ipfs/QmWLsWkcpeYBFJtvzGrdp9KH8LjZM4z5oATDqRAu13hNnF" alt="Card image" style="width:100%">
+                    <div class="card-header">{{ datetime }}</div>
+                    <img class="card-img-top" src="https://gateway.pinata.cloud/ipfs/{{ image_cid }}" alt="Card image" style="width:100%"> <!-- create URL -->
                     <div class="card-body">
-                        <p class="card-text">Date: {{ data_point.timestamp }}</p>
-                        <p class="card-text">Time: {{ data_point.timestamp }}</p>
-                        <p class="card-text">Home: {{ data_point.stay_home }}</p>
+                        <p class="card-text">Date: {{ datetime }}</p> <!-- create formating -->
+                        <p class="card-text">Time: {{ datetime }}</p> <!-- create formating -->
+                        <p class="card-text">Home: {{ stay_home }}</p>
                     </div>
                 </div>
             {% endfor %}
