@@ -11,3 +11,10 @@ Javascript used:
 Charts.js
 Leaflet
 
+Please see the TODO comments for open tasks.
+
+Further open tasks:
+
+- How to get the hashcodes from the user?
+- Verify the hashcodes on download.
+- ... many other things ...
