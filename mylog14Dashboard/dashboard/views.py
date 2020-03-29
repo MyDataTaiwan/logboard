@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-import json
+from datetime import datetime
 
 # Create your views here.
 # replace by JSON file that will be read in
@@ -66,12 +66,20 @@ def population_chart(request):
     CRITICAL_TEMP = 37.5
     critical_line = []
 
-    labels = [d['timestamp'] for d in monitoring_data]
+    labels = [datetime.fromtimestamp(d['timestamp']).hour for d in monitoring_data]
     for d in monitoring_data:
         critical_line.append(CRITICAL_TEMP)
 
-    measurements_max = [d['body_temperature'] for d in monitoring_data]
-    measurements_min = [d['body_temperature'] for d in monitoring_data]
+    measurements_fever = [d['body_temperature'] for d in monitoring_data]
+    
+    measurements_max = []
+    measurements_min = []
+
+    for date in labels:
+    
+        measurements_max.append(max(measurements_fever))
+        measurements_min.append(min(measurements_fever))
+
 
     return JsonResponse(data={
         'labels': labels,
@@ -80,5 +88,12 @@ def population_chart(request):
         'threshold': critical_line
     })
 
-def test(request):
-    return render(request, 'dashboard/test.html')
+def visits_map(request):
+
+    latitude = [d['latitude'] for d in monitoring_data]
+    longitude = [d['longitute'] for d in monitoring_data]
+
+    return JsonResponse(data={
+        'lat': latitude,
+        'long': longitude
+    })
