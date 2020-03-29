@@ -3,3 +3,4 @@
 *.iml
 venv/*
 *.pyc
+.DS_Store

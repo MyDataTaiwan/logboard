@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from datetime import datetime
+import requests
 
-# Create your views here.
-# replace by JSON file that will be read in
-monitoring_data = [
+def get_data():
+    #Dummy Data to be replaced
+    monitoring_data = [
         {
             "user_pub_key": "9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99",
             "timestamp": 1585412837, 
@@ -53,47 +54,39 @@ monitoring_data = [
             "running_nose": 0,
             "equipment": "forehead"
         }
-]
+    ]   
+    return monitoring_data
 
+
+
+# Create your views here.
 def home(request):
+    data = get_data()
+    updated_data = data
     context = {
-        'measurement': monitoring_data
+        'measurement': updated_data,
+        'timestamps': [datetime.fromtimestamp(d['timestamp']).date() for d in data]
+        
     }
     return render(request, 'dashboard/dashboard.html', context)
 
 
 def population_chart(request):
-    CRITICAL_TEMP = 37.5
-    critical_line = []
-
-    labels = [datetime.fromtimestamp(d['timestamp']).hour for d in monitoring_data]
-    for d in monitoring_data:
-        critical_line.append(CRITICAL_TEMP)
-
-    measurements_fever = [d['body_temperature'] for d in monitoring_data]
+    data =  get_data()
     
-    measurements_max = []
-    measurements_min = []
+    timestamps = [d['timestamp'] for d in data]
+    measurements_fever = [d['body_temperature'] for d in data]
 
-    for date in labels:
-    
-        measurements_max.append(max(measurements_fever))
-        measurements_min.append(min(measurements_fever))
+    first_day = min(timestamps)
+    labels = timestamps
 
+    measurements_max = [31,31,33]
+    measurements_min =[3,3,4]
+    critical_line = [37.5, 37.5, 37.5]
 
     return JsonResponse(data={
         'labels': labels,
         'measure_fever_max': measurements_max,
         'measure_fever_min': measurements_min,
         'threshold': critical_line
-    })
-
-def visits_map(request):
-
-    latitude = [d['latitude'] for d in monitoring_data]
-    longitude = [d['longitute'] for d in monitoring_data]
-
-    return JsonResponse(data={
-        'lat': latitude,
-        'long': longitude
     })

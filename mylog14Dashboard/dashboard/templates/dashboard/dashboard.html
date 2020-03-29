@@ -50,26 +50,20 @@
 {% block content %}
 <section class="body">
     <div class="row"><h1>Graph and Map Row</h1>
-        <div class="col-md-6">
-            <section class="panel">
-                <div id="container" style="width: 50%;">
-                    <canvas id="population-chart" data-url="{% url 'population-chart' %}"></canvas>
-                </div>
-            </section>
+        <div class="col-sm-8" style="width: 50%;">
+            <canvas id="population-chart" data-url="{% url 'population-chart' %}"></canvas>
         </div>
-        <div class="col-md-6">
-            <section class="panel">
-                Map goes here
-                <div id='map' width="100%" style='height:400px'></div>
-            </section>
+        <div class="col-sm-4" style="width: 50%;">
+            <iframe frameborder="0" src="https://www.openstreetmap.org/export/embed.html"></iframe>
         </div>
     </div>
     <div class="row"><h1>Data Row</h1>
-        <table id="monitoring_table" align="center" style="width:100%">
+        <div class="table-responsive">
+        <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
           <tr>
             <th>Timestamp:</th>
-              {% for data_point in measurement %}
-                <td>{{ data_point.timestamp }}</td>
+              {% for datetime in timestamps %}
+                <td>{{ datetime }}</td>
               {% endfor %}
           </tr>
           <tr>
@@ -97,7 +91,20 @@
               {% endfor %}
           </tr>
         </table>
+        </div>
     </div>
-    <div class="row"><h1>Pictures Row</h1></div>
+    <div class="row"><h1>Pictures Row</h1>
+        {% for data_point in measurement %}
+            <div class="card" style="width:400px">
+                <div class="card-header">{{ data_point.timestamp }}</div>
+                <img class="card-img-top" src="https://gateway.pinata.cloud/ipfs/QmWLsWkcpeYBFJtvzGrdp9KH8LjZM4z5oATDqRAu13hNnF" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <p class="card-text">Date: {{ data_point.timestamp }}</p>
+                    <p class="card-text">Time: {{ data_point.timestamp }}</p>
+                    <p class="card-text">Home: {{ data_point.stay_home }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 </section>
 {% endblock content %}
