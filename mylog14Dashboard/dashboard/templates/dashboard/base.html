@@ -13,11 +13,9 @@
         <title>CodeVsCovid19 -  Dashboard</title>
     {% endif %}
 </head>
-<body>
-    <div class="container-fluid">
-        {% block content %}{% endblock %}
-    </div>
+<body data-spy="scroll" data-target=".navbar" data-offset="100">
 
+    {% block content %}{% endblock %}
     <!-- Charts.js import -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
