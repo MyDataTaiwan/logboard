@@ -1,0 +1,103 @@
+{% extends "dashboard/base.html" %}
+{% block javascript %}
+    <script>
+    $(function () {
+        var $populationChart = $("#population-chart");
+        $.ajax({
+            url: $populationChart.data("url"),
+            success: function (data) {
+
+                var ctx = $populationChart[0].getContext("2d");
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                        {
+                            label: 'max_fever',
+                            borderColor: 'red',
+                            data: data.measure_fever_max
+                        },
+                        {
+                            label: 'min_fever',
+                            borderColor: 'green',
+                            data: data.measure_fever_min
+                        },
+                        {
+                            label: 'threshold',
+                            borderColor: 'yellow',
+                            data: data.threshold
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false,
+                            text: 'Fever'
+                        }
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+{% endblock %}
+{% block content %}
+<section class="body">
+    <div class="row"><h1>Graph and Map Row</h1>
+        <div class="col-md-6">
+            <section class="panel">
+                <div id="container" style="width: 50%;">
+                    <canvas id="population-chart" data-url="{% url 'population-chart' %}"></canvas>
+                </div>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="panel">
+                Map goes here
+                <div id='map' width="100%" style='height:400px'></div>
+            </section>
+        </div>
+    </div>
+    <div class="row"><h1>Data Row</h1>
+        <table id="monitoring_table" align="center" style="width:100%">
+          <tr>
+            <th>Timestamp:</th>
+              {% for data_point in measurement %}
+                <td>{{ data_point.timestamp }}</td>
+              {% endfor %}
+          </tr>
+          <tr>
+            <th>Body Temperature C(max):</th>
+              {% for data_point in measurement %}
+                <td>{{ data_point.body_temperature }}</td>
+              {% endfor %}
+          </tr>
+          <tr>
+            <th>Body Temperature C(min):</th>
+            {% for data_point in measurement %}
+                <td>{{ data_point.body_temperature }}</td>
+              {% endfor %}
+          </tr>
+            <tr>
+            <th>Coughing:</th>
+            {% for data_point in measurement %}
+                <td>{{ data_point.coughing }}</td>
+              {% endfor %}
+          </tr>
+            <tr>
+            <th>Running Nose:</th>
+            {% for data_point in measurement %}
+                <td>{{ data_point.running_nose }}</td>
+              {% endfor %}
+          </tr>
+        </table>
+    </div>
+    <div class="row"><h1>Pictures Row</h1></div>
+</section>
+{% endblock content %}
