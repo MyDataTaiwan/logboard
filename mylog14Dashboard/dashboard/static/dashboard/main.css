@@ -2,7 +2,7 @@ body {
   background: #f9f9f9
   ;
 }
-th, td, tr {
+th, td{
   border-bottom: 2px solid #ddd;
   text-align: left;
 }
