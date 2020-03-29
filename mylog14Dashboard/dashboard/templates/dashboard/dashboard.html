@@ -20,6 +20,11 @@ $(function () {
                         data: data.measure_fever_max
                     },
                     {
+                        label: 'measurement',
+                        borderColor: 'black',
+                        data: data.measure_fever_min
+                    },
+                    {
                         label: 'min_fever',
                         borderColor: 'green',
                         data: data.measure_fever_min
@@ -47,17 +52,49 @@ $(function () {
 </script>
 <script>
 
-	var mymap = L.map('mapid').setView([24.953606, 121.4095702], 13);
-    var marker = L.marker([24.953606, 121.4095702]).addTo(mymap);
-	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-		maxZoom: 18,
-		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		id: 'mapbox/streets-v11',
-		tileSize: 512,
-		zoomOffset: -1
-	}).addTo(mymap);
+//DUMMY DATA TO BE REPLACED WITH AJAX CALL
+var home_location =  [23.953606, 120.4095702];
+
+var places = [
+  { lat: '23.953606',
+    long: '121.4095702',
+  },
+  { lat: '23.953606',
+    long: '120.4095702',
+  },
+  { lat: '23.02168',
+    long: '120.224569',
+  }
+];
+
+var mymap = L.map('mapid').setView(home_location, 13);
+var home_marker = L.marker(home_location).addTo(mymap);
+home_marker.bindPopup("Home Location").openPopup();
+
+for(var i = 0; i < places.length; i++) {
+    L.marker([places[i].lat, places[i].long]).addTo(mymap);
+}
+
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1
+}).addTo(mymap);
+
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(mymap);
+}
+
+mymap.on('click', onMapClick);  
 
 </script>
 {% endblock %}

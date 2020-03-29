@@ -80,13 +80,19 @@ def population_chart(request):
     first_day = min(timestamps)
     labels = timestamps
 
-    measurements_max = [31,31,33]
-    measurements_min =[3,3,4]
+    measurements_max = []
+    measurements_min = []
+
+    for measurement in measurements_fever:
+        measurements_max.append(max(measurements_fever))
+        measurements_min.append(min(measurements_fever))
+        
     critical_line = [37.5, 37.5, 37.5]
 
     return JsonResponse(data={
         'labels': labels,
         'measure_fever_max': measurements_max,
+        'measurement_fever': measurements_fever,
         'measure_fever_min': measurements_min,
         'threshold': critical_line
     })
