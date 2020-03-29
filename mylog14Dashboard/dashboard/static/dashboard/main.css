@@ -6,3 +6,5 @@ th, td{
   border-bottom: 2px solid #ddd;
   text-align: left;
 }
+
+#mapid { height: 675px; }
