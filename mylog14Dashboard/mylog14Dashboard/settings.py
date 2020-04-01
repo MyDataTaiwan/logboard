@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'api.v1.records',
     ]
 
 MIDDLEWARE = [
@@ -123,3 +124,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/html/static'
+
+# SSL
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True

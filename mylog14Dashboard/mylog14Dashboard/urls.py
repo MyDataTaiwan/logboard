@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers, viewsets
+
+from api.v1.records.views import RecordViewSet
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'records', RecordViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include('dashboard.urls')),
-    path(r'^api-auth/', include('rest_framework.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/v1/', include(router.urls)),
 ]
