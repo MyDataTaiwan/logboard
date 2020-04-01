@@ -7,7 +7,13 @@ from rest_framework.response import Response
 from datetime import datetime
 import pandas as pd
 import requests
+
 from . import models
+
+import logging
+
+#Create a logger instance
+logger = logging.getLogger('views')
 
 #Constant for the yellow threshhold line
 CRITICAL_TEMP  = 37.5
@@ -28,6 +34,8 @@ def home(request):
 
 #TODO  003 Fix the display issue with the chart, by implementing the restful API
 def population_chart(request):
+    logger.info(f'Chart was loaded: {request}')
+
     monitoring_data = pd.DataFrame(models.load_CID_data())
     monitoring_data['critical_temp'] = CRITICAL_TEMP
 

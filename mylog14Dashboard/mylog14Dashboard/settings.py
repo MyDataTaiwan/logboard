@@ -82,6 +82,37 @@ DATABASES = {
     }
 }
 
+# Adding a logger for to debug and validate input to the dashboard
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/Users/tweisskopf/Documents/02_Development/CodeVsCovid19/log/debug.log',
+        },
+        'sec_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/Users/tweisskopf/Documents/02_Development/CodeVsCovid19/log/security.log',
+        },
+    },
+    'loggers': {
+        'dashboard': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.security.DisallowedHost': {
+            'handlers': ['sec_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
