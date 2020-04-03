@@ -131,19 +131,19 @@ mymap.on('click', onMapClick);
             <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
               <tr>
                 <th>Timestamp:</th>
-                  {% for x in timestamps %}
+                  {% for x in timestamp %}
                     <td>{{ x }}</td>
                   {% endfor %}
               </tr>
               <tr>
                 <th>Body Temperature C(max):</th>
-                  {% for temperature in body_temp_max %}
+                  {% for temperature in body_temperature %}
                     <td>{{ temperature }}</td>
                   {% endfor %}
               </tr>
               <tr>
                 <th>Body Temperature C(min):</th>
-                {% for temperature in body_temp_min %}
+                {% for temperature in body_temperature %}
                     <td>{{ temperature }}</td>
                   {% endfor %}
               </tr>

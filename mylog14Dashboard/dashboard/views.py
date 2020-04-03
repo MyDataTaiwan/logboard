@@ -18,18 +18,17 @@ logger = logging.getLogger('views')
 #Constant for the yellow threshhold line
 CRITICAL_TEMP  = 37.5
 
+def splash_screen(request):
+    return render(request, 'dashboard/splash_screen.html')
+
+
 def home(request):
     monitoring_data = pd.DataFrame(models.load_CID_data())
-    context = {
-        #TODO 000 check with the DJANGO Template functions how to get nested Values and Format the Timestamps properly
-        #TODO 001 Aggregate the days in a dataframe e.g. all timestamps of a specific day get the max temp. and min. temp
-        'timestamps': monitoring_data['timestamp'],
-        'body_temp': monitoring_data['body_temperature'],
-        'body_temp_max': monitoring_data['body_temperature'],
-        'body_temp_min': monitoring_data['body_temperature'],
-        'coughing': monitoring_data['coughing'],
-        'running_nose': monitoring_data['running_nose'],
-    }
+
+    #TODO 000 check with the DJANGO Template functions how to get nested Values and Format the Timestamps properly
+    #TODO 001 Aggregate the days in a dataframe e.g. all timestamps of a specific day get the max temp. and min. temp
+
+    context = monitoring_data.to_dict()
     return render(request, 'dashboard/dashboard.html', context)
 
 #TODO  003 Fix the display issue with the chart, by implementing the restful API
@@ -46,8 +45,8 @@ def population_chart(request):
         'timestamps': chart_df['timestamp'],
         'body_temp': chart_df['body_temperature'],
         'body_temp_max': chart_df['body_temperature'],
-        'body_temp_min': chart_df['body_temperature'],
-        'body_temp_critical': chart_df['critical_temp'],
+        'body_temp_min': [37.5, 36.5, 34.9, 37.5],#chart_df['body_temperature'],
+        'body_temp_critical': [37.5, 37.5, 37.5, 37.5]#chart_df['critical_temp'],
     }
 
     return JsonResponse(data)
