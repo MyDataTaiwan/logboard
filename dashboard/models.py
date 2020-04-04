@@ -11,7 +11,7 @@ import logging
 
 # Temperature Constants for verification and line threshhold
 MIN_BODY_TEMP = 35
-MAX_BODY_TEMP = 43
+MAX_BODY_TEMP = 42
 CRITICAL_TEMP  = 37.5
 
 logger = logging.getLogger('models')
@@ -19,7 +19,7 @@ logger = logging.getLogger('models')
 # TODO 001 Aggregate the timestamps specific day get the max temp. and min. temp
 # TODO Change default values to something more useful    
 # TODO Write the class to store the authorised hashes from the user to generate the unique dashboard
-
+# TODO Body Temperature needs to be converted if Farenheit, or Celcius
 class Measurement(models.Model):
     title = 'dashboard'
     CELSIUS = 'C'
@@ -37,6 +37,9 @@ class Measurement(models.Model):
         choices=TEMPERATURE_UNIT_CHOICES,
         default=CELSIUS,
     )
+    bodyTemperatureMAX = models.FloatField(default=MAX_BODY_TEMP)
+    bodyTemperatureMIN = models.FloatField(default=MIN_BODY_TEMP)
+    bodyTemperatureCRITICAL = models.FloatField(default=CRITICAL_TEMP)
     coughing = models.IntegerField(default=0)
     headache = models.IntegerField(default=0)
     runnyNose = models.IntegerField(default=0)

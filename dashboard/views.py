@@ -27,15 +27,34 @@ class DashboardView(ListView):
     context_object_name = 'measurements'
 
     def get_queryset(self):
-        userHash = get_object_or_404(Measurement, userHash=self.kwargs.get('userHash'))
+        userHash = '9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99' #get_object_or_404(Measurement, userHash=self.kwargs.get('userHash'))
         return Measurement.objects.filter(userHash=userHash).order_by('-timestamp')
 
 
-class LineChartView(DetailView):
-    model = Measurement
-    context_object_name = 'measurements'
+def line_chart(request):
+    labels = []
+    body_temperature = []
+    body_temperature_MAX = []
+    body_temperature_MIN = []
+    body_temperature_CRITICAL = []
 
-    logger.info(f'Chart was loaded: {context_object_name}')
+    queryset = Measurement.objects.order_by('timestamp')
+
+    for measurement in queryset:
+        labels.append(measurement.timestamp)
+        body_temperature.append(measurement.bodyTemperature)
+        body_temperature_MAX.append(measurement.bodyTemperatureMAX)
+        body_temperature_MIN.append(measurement.bodyTemperatureMIN)
+        body_temperature_CRITICAL.append(measurement.bodyTemperatureCRITICAL)
+
+    return JsonResponse(data={
+        'labels': labels,
+        'body_temperature': body_temperature,
+        'body_temperature_MAX': body_temperature_MAX,
+        'body_temperature_MIN': body_temperature_MIN,
+        'body_temperature_CRITICAL': body_temperature_CRITICAL,
+
+    })
 
 class MeasurementsDeleteView(DeleteView):
     model = Measurement
