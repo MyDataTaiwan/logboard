@@ -1,20 +1,9 @@
 # mylog14-dashboard
 
-This is the dashboard to visualise the information received from the "custodian".
+Frontend for government employees to track custodian data, built on Django Framework with Class Views.
 
-Find the necessary requirements in requirements.txt
+Dependencies can be found in requirements.txt
 
-Run the code with a virtual environment. 
+## TODOs
 
-Javascript used:
 
-Charts.js
-Leaflet
-
-Please see the TODO comments for open tasks.
-
-Further open tasks:
-
-- How to get the hashcodes from the user?
-- Verify the hashcodes on download.
-- ... many other things ...
