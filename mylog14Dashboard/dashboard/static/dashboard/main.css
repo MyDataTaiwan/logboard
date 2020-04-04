@@ -1,5 +1,5 @@
 body {
-  background: #f9f9f9
+  background: #dde4e9
   ;
 }
 th, td{
@@ -8,3 +8,33 @@ th, td{
 }
 
 #mapid { height: 675px; }
+
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+ul {
+  margin: 0;
+}
+
+.bg-light {
+  background-color: #dde4e9;
+}
+
+.site-header .navbar-nav .nav-link {
+  color: #444444;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}

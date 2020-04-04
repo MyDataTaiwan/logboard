@@ -1,0 +1,106 @@
+{% extends "dashboard/base.html" %}
+
+{% block javascript %}
+{% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">  
+    <ul class="navbar-nav">
+        <li class="nav-item">
+        <a class="nav-link" href="#section1">Visualisation</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="#section2">Data</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="#section3">Photos</a>
+        </li>
+    </ul>
+</nav>
+    <div id="section1" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
+        <h1>Vizualisation</h1>
+        <div class="row">
+            <div class="col-sm-6 bg-light">
+                <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
+            </div>
+            <div class="col-sm-4 bg-light"><div id="mapid"></div></div>
+        </div>
+    </div>
+    <!-- This Section is for the Data Table, it should be more or less fine -->
+    <div id="section2" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
+        <h1>Data Row</h1>
+        <div class="row">
+            <div class="table-responsive">
+            <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
+              <tr>
+                <th>Date:</th>
+                {% for object in measurements %}
+                    <td>{{ object.timestamp }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th>Body Temperature C(max):</th>
+                {% for object in measurements %}
+                    <td>{{ object.bodyTemperature }} {{ object.bodyTemperatureUnit }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th>Body Temperature C(min):</th>
+                {% for object in measurements %}
+                    <td>{{ object.bodyTemperature }} {{ object.bodyTemperatureUnit }}</td>
+                {% endfor %}
+              </tr>
+                <tr>
+                <th>Coughing:</th>
+                {% for object in measurements %}
+                    <td>{{ object.coughing }}</td>
+                {% endfor %}
+              </tr>
+                <tr>
+                <th>Running Nose:</th>
+                {% for object in measurements %}
+                    <td>{{ object.runnyNose }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th>Headache:</th>
+                {% for object in measurements %}
+                    <td>{{ object.headache }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th>Sore Throat:</th>
+                {% for object in measurements %}
+                    <td>{{ object.soreThroat }}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th>Loss of taste:</th>
+                {% for object in measurements %}
+                    <td>{{ object.tasteLoss }}</td>
+                {% endfor %}
+              </tr>
+            </table>
+            </div>
+        </div>
+    </div>
+    <!-- This section needs some revision on the creation of cards, I haven't figured yet how to do nested information
+        e.g. each observation has a data, hour, an image hash for retrieval on IPFS, and a location indication propably need to create a nestef for loop or something:
+          https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#if -->
+
+    <div id="section3" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
+        <h1>Pictures Row</h1>
+        <div class="row">
+            {% for object in measurements %}
+                <div class="card" style="width:400px">
+                    <div class="card-header">{{ object.id }}</div>
+                    <img class="card-img-top" src="https://gateway.pinata.cloud/ipfs/{{ image_cid }}" alt="Card image" style="width:100%"> <!-- create URL -->
+                    <div class="card-body">
+                        <p class="card-text">Date: {{ object.timestamp }}</p> <!-- create formating -->
+                        <p class="card-text">Time: {{ object.timestamp }}</p> <!-- create formating -->
+                        <p class="card-text">Home: {{ object.latitude }}, {{ object.longitude }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

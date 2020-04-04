@@ -1,0 +1,15 @@
+{% extends "dashboard/base.html" %}
+
+{% block javascript %}
+<script>
+    function getDashboard() {
+        location.replace("http://127.0.0.1:8000/dashboard/details")
+    }
+</script>
+{% endblock %}
+{% block content %}
+<h1>Here is the splashscreen how to get to the dashboard</h1>
+<label for="hcode">Type code:</label>
+<input type="text" id="hcode" name="hcode"><br><br>
+<button onclick="getDashboard()">Get Data</button>
+{% endblock content %}

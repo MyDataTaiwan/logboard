@@ -1,74 +1,45 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-"""
-from rest_framework.views import APIView
-from rest_framework.response import Response
-"""
+from django.views.generic import(
+    ListView,
+    DetailView,
+    DeleteView
+)
+
 from datetime import datetime
 import pandas as pd
-import requests
+import requests, logging
+from .models import Measurement
 
-from . import models
-
-import logging
 
 #Create a logger instance
 logger = logging.getLogger('views')
 
-#Constant for the yellow threshhold line
-CRITICAL_TEMP  = 37.5
-
-def splash_screen(request):
-    return render(request, 'dashboard/splash_screen.html')
 
 
-def home(request):
-    monitoring_data = pd.DataFrame(models.load_CID_data())
+class DashboardHomeView(ListView):
+    model = Measurement
+    template_name = 'dashboard/home.html'
+    context_object_name = 'measurements'
 
-    #TODO 000 check with the DJANGO Template functions how to get nested Values and Format the Timestamps properly
-    #TODO 001 Aggregate the days in a dataframe e.g. all timestamps of a specific day get the max temp. and min. temp
+class DashboardView(ListView):
+    model = Measurement
+    template_name = 'dashboard/dashboard_detail.html'
+    context_object_name = 'measurements'
 
-    context = monitoring_data.to_dict()
-    return render(request, 'dashboard/dashboard.html', context)
+    def get_queryset(self):
+        userHash = 'test_hash'
+        return Measurement.objects.filter(userHash = userHash).order_by('timestamp')
 
-#TODO  003 Fix the display issue with the chart, by implementing the restful API
-def population_chart(request):
-    logger.info(f'Chart was loaded: {request}')
 
-    monitoring_data = pd.DataFrame(models.load_CID_data())
-    monitoring_data['critical_temp'] = CRITICAL_TEMP
+class LineChartView(DetailView):
+    model = Measurement
+    context_object_name = 'measurements'
 
-    #TODO: 002 Implement the aggregation by day, to find the max and min body_temp of the days
-    chart_df = monitoring_data[['timestamp', 'body_temperature', 'critical_temp']]
+    logger.info(f'Chart was loaded: {context_object_name}')
 
-    data = {
-        'timestamps': chart_df['timestamp'],
-        'body_temp': chart_df['body_temperature'],
-        'body_temp_max': chart_df['body_temperature'],
-        'body_temp_min': [37.5, 36.5, 34.9, 37.5],#chart_df['body_temperature'],
-        'body_temp_critical': [37.5, 37.5, 37.5, 37.5]#chart_df['critical_temp'],
-    }
+class MeasurementsDeleteView(DeleteView):
+    model = Measurement
+    success_url = '/'
 
-    return JsonResponse(data)
-
-#TODO: Use Restful API to communicate with the chart as indicated in 003
-""" class ChartData(APIView):
-    authentication_classes = []
-    permission_classes = []
-
-    def get(self, request, format=None):
-
-        monitoring_data = pd.DataFrame(models.load_CID_data())
-        monitoring_data['critical_temp'] = CRITICAL_TEMP
-
-        #TODO: 002 Implement the aggregation by day, to find the max and min body_temp of the days
-        chart_df = monitoring_data[['timestamp', 'body_temperature', 'critical_temp']]
-
-        data = {
-            'timestamps': chart_df['timestamp'],
-            'body_temp': chart_df['body_temperature'],
-            'body_temp_max': chart_df['body_temperature'],
-            'body_temp_min': chart_df['body_temperature'],
-            'body_temp_critical': chart_df['critical_temp'],
-        }
-        return Response(data) """
+    #TODO Implement the function to drop the table

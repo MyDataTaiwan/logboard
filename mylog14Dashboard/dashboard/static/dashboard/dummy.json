@@ -1,0 +1,73 @@
+[
+    {
+      "bodyTemperature": 35.2,
+      "bodyTemperatureUnit": "°C",
+      "condition": {
+        "coughing": false,
+        "headache": true,
+        "runnyNose": false,
+        "soreThroat": true
+      },
+      "snapshot": {
+        "timestamp": 1585654617019,
+        "locationStamp": {
+          "latitude": 24.9985271,
+          "longitude": 121.4570335,
+          "accuracy": 2794
+        }
+      },
+      "photos": []
+    },
+    {
+      "bodyTemperature": 35.9,
+      "bodyTemperatureUnit": "°C",
+      "condition": {
+        "coughing": false,
+        "headache": true,
+        "runnyNose": false,
+        "soreThroat": true
+      },
+      "snapshot": {
+        "timestamp": 1585654768318,
+        "locationStamp": {
+          "latitude": 24.9985271,
+          "longitude": 121.4570335,
+          "accuracy": 2794
+        }
+      },
+      "photos": [
+        {
+          "byteString": "<base64 bytestring>",
+          "tag": "I love logging my data while preserving my privacy!"
+        },
+        {
+          "byteString": "<base64 bytestring>",
+          "tag": "It's rainy today :cry:"
+        }
+      ]
+    },
+    {
+      "bodyTemperature": null,
+      "bodyTemperatureUnit": "°C",
+      "condition": {
+        "coughing": false,
+        "headache": true,
+        "runnyNose": false,
+        "soreThroat": true
+      },
+      "snapshot": {
+        "timestamp": 1585654768319,
+        "locationStamp": {
+          "latitude": null,
+          "longitude": null,
+          "accuracy": null
+        }
+      },
+      "photos": [
+        {
+          "byteString": "<base64 bytestring>"
+        }
+      ]
+    }
+  ]
+  
