@@ -69,6 +69,8 @@ $(function () {
     const home_location = [24.953606,121,4095702]
     const mymap = L.map('mapid').setView(home_location, 13);
 
+    const marker = L.marker(home_location).addTo(mymap);
+
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -81,113 +83,101 @@ $(function () {
 </script>
 {% endblock %}
 {% block content %}
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top"> 
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#">{{ title }}</a>
-    </div> 
-    <ul class="navbar-nav">
-        <li class="nav-item">
-        <a class="nav-link" href="#section1">Visualisation</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" href="#section2">Data</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" href="#section3">Photos</a>
-        </li>
-    </ul>
-</nav>
-    <div id="section1" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
-        <h1>Chart and Map</h1>
+<div class="uk-flex">
+    <div id="section1" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
+        <h1 class="uk-background-primary">Chart and Map</h1>
         <div class="row">
-            <div class="col-sm-6 bg-light">
+            <div class="uk-background-muted uk-flex-first">
                 <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
             </div>
-            <div class="col-sm-4 bg-light"><div id="mapid"></div></div>
+            <hr class="uk-divider-vertical">
+            <div class="col-sm-4 uk-background-muted"><div id="mapid"></div></div>
         </div>
     </div>
-    <!-- This Section is for the Data Table, it should be more or less fine -->
-    <div id="section2" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
-        <h1>Measurements</h1>
-        <div class="row">
-            <div class="table-responsive">
-            <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
-                <tr>
-                    <th class=" bg-dark">ID:</th>
-                    {% for object in measurements %}
-                        <td  class="bg-dark">{{ object.id }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                <th>Date:</th>
+</div>  
+<hr class="uk-divider-icon">
+<!-- This Section is for the Data Table, it should be more or less fine -->
+<div id="section2" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
+    <h1 class="uk-background-primary">Measurements</h1>
+    <div class="row">
+        <div class="table-responsive">
+        <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
+            <tr>
+                <th class="uk-background-primary">ID:</th>
                 {% for object in measurements %}
-                    <td>{{ object.timestamp }}</td>
+                    <td  class="uk-background-primary">{{ object.id }}</td>
                 {% endfor %}
-              </tr>
-              <tr>
-                <th>Body Temperature C(max):</th>
-                {% for object in measurements %}
-                    <td>{{ object.bodyTemperature }} {{ object.bodyTemperatureUnit }}</td>
-                {% endfor %}
-              </tr>
-              <tr>
-                <th>Body Temperature C(min):</th>
-                {% for object in measurements %}
-                    <td>{{ object.bodyTemperature }} {{ object.bodyTemperatureUnit }}</td>
-                {% endfor %}
-              </tr>
-                <tr>
-                <th>Coughing:</th>
-                {% for object in measurements %}
-                    <td>{{ object.coughing }}</td>
-                {% endfor %}
-              </tr>
-                <tr>
-                <th>Running Nose:</th>
-                {% for object in measurements %}
-                    <td>{{ object.runnyNose }}</td>
-                {% endfor %}
-              </tr>
-              <tr>
-                <th>Headache:</th>
-                {% for object in measurements %}
-                    <td>{{ object.headache }}</td>
-                {% endfor %}
-              </tr>
-              <tr>
-                <th>Sore Throat:</th>
-                {% for object in measurements %}
-                    <td>{{ object.soreThroat }}</td>
-                {% endfor %}
-              </tr>
-              <tr>
-                <th>Loss of taste:</th>
-                {% for object in measurements %}
-                    <td>{{ object.tasteLoss }}</td>
-                {% endfor %}
-              </tr>
-            </table>
-            </div>
-        </div>
-    </div>
-    <!-- This section needs some revision on the creation of cards, I haven't figured yet how to do nested information
-        e.g. each observation has a data, hour, an image hash for retrieval on IPFS, and a location indication propably need to create a nestef for loop or something:
-          https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#if -->
-
-    <div id="section3" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
-        <h1>Photocards</h1>
-        <div class="row">
+            </tr>
+            <tr>
+            <th>Date:</th>
             {% for object in measurements %}
-                <div class="card" style="width:400px">
-                    <div class="card-header">{{ object.id }}</div>
-                    <img class="card-img-top" src="{{ object.image.url }}" style="width:100%">
-                    <div class="card-body">
-                        <p class="card-text">Date: {{ object.timestamp }}</p> <!-- create formating -->
-                        <p class="card-text">Time: {{ object.timestamp }}</p> <!-- create formating -->
-                        <p class="card-text">Home: {{ object.latitude }}, {{ object.longitude }}</p>
-                    </div>
-                </div>
+                <td>{{ object.timestamp }}</td>
             {% endfor %}
+            </tr>
+            <tr>
+            <th>Body Temperature C(max):</th>
+            {% for object in measurements %}
+                <td>{{ object.bodyTemperature }} {{ object.bodyTemperatureUnit }}</td>
+            {% endfor %}
+            </tr>
+            <tr>
+            <th>Body Temperature C(min):</th>
+            {% for object in measurements %}
+                <td>{{ object.bodyTemperature }} {{ object.bodyTemperatureUnit }}</td>
+            {% endfor %}
+            </tr>
+            <tr>
+            <th>Coughing:</th>
+            {% for object in measurements %}
+                <td>{{ object.coughing }}</td>
+            {% endfor %}
+            </tr>
+            <tr>
+            <th>Running Nose:</th>
+            {% for object in measurements %}
+                <td>{{ object.runnyNose }}</td>
+            {% endfor %}
+            </tr>
+            <tr>
+            <th>Headache:</th>
+            {% for object in measurements %}
+                <td>{{ object.headache }}</td>
+            {% endfor %}
+            </tr>
+            <tr>
+            <th>Sore Throat:</th>
+            {% for object in measurements %}
+                <td>{{ object.soreThroat }}</td>
+            {% endfor %}
+            </tr>
+            <tr>
+            <th>Loss of taste:</th>
+            {% for object in measurements %}
+                <td>{{ object.tasteLoss }}</td>
+            {% endfor %}
+            </tr>
+        </table>
         </div>
     </div>
+</div>
+<!-- This section needs some revision on the creation of cards, I haven't figured yet how to do nested information
+    e.g. each observation has a data, hour, an image hash for retrieval on IPFS, and a location indication propably need to create a nestef for loop or something:
+        https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#if -->
+<hr class="uk-divider-icon">
+<div id="section3" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
+    <h1 class="uk-background-primary">Photocards</h1>
+    <div class="uk-flex">
+        {% for object in measurements %}
+            <div class="uk-card uk-card-hover" style="width:400px">
+                <div class="uk-card-header">{{ object.id }}</div>
+                <img class="uk-card-media-top" src="{{ object.image.url }}" style="width:100%">
+                <div class="uk-card-body">
+                    <p>Date: {{ object.timestamp|date:'Y-m-d' }}</p> <!-- create formating -->
+                    <p>Time: {{ object.timestamp|date:'H:i' }}</p> <!-- create formating -->
+                    <p>Location: {{ object.latitude }}, {{ object.longitude }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}

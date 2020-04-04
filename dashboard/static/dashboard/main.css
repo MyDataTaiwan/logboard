@@ -1,16 +1,5 @@
 body {
-  background: #dde4e9
-  ;
-}
-th, td{
-  border-bottom: 2px solid #ddd;
-  text-align: left;
-}
-
-#mapid { height: 675px; }
-
-body {
-  background: #fafafa;
+  background: #e1eef6;
   color: #333333;
   margin-top: 5rem;
 }
@@ -23,16 +12,32 @@ ul {
   margin: 0;
 }
 
-.bg-light {
-  background-color: #dde4e9;
+.uk-section-muted{
+  background-color: #fffff5;
+  color: #5c196b;
 }
 
+.uk-background-muted{
+  background-color: #fffff5;
+  color: #5c196b;
+}
+
+.uk-background-primary{
+  background-color: #5c196b;
+  color: #fffff5;
+}
+
+
+
+#line-chart { height: 675px; }
+#mapid { height: 675px; }
+
 .site-header .navbar-nav .nav-link {
-  color: #444444;
+color: #e1eef6;
 }
 
 .site-header .navbar-nav .nav-link:hover {
-  color: #ffffff;
+  color: #e1eef6;
 }
 
 .site-header .navbar-nav .nav-link.active {

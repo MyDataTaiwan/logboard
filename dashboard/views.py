@@ -55,6 +55,21 @@ def line_chart(request):
 
     })
 
+def map_locations(request):
+    latitude = []
+    longitude = []
+
+    queryset = Measurement.objects.order_by('timestamp')
+    for measurement in queryset:
+        latitude.append(measurement.latitude)
+        longitude.append(measurement.longitude)
+
+    return JsonResponse(data={
+        'latitude': latitude,
+        'longitude': longitude,
+    })
+
+
 class MeasurementsDeleteView(DeleteView):
     model = Measurement
     success_url = '/'
