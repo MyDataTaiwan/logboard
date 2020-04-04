@@ -12,7 +12,6 @@ import pandas as pd
 import requests, logging
 from .models import Measurement, AuthCustodianHashes
 
-
 #Create a logger instance
 logger = logging.getLogger('views')
 

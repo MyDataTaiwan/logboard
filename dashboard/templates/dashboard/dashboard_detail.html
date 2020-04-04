@@ -98,7 +98,7 @@ $(function () {
     </ul>
 </nav>
     <div id="section1" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
-        <h1>Vizualisation</h1>
+        <h1>Chart and Map</h1>
         <div class="row">
             <div class="col-sm-6 bg-light">
                 <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
@@ -108,11 +108,17 @@ $(function () {
     </div>
     <!-- This Section is for the Data Table, it should be more or less fine -->
     <div id="section2" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
-        <h1>Data Row</h1>
+        <h1>Measurements</h1>
         <div class="row">
             <div class="table-responsive">
             <table id="monitoring_table" align="center" style="width:100%" class="table table-hover">
-              <tr>
+                <tr>
+                    <th class=" bg-dark">ID:</th>
+                    {% for object in measurements %}
+                        <td  class="bg-dark">{{ object.id }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
                 <th>Date:</th>
                 {% for object in measurements %}
                     <td>{{ object.timestamp }}</td>
@@ -169,12 +175,12 @@ $(function () {
           https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#if -->
 
     <div id="section3" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
-        <h1>Pictures Row</h1>
+        <h1>Photocards</h1>
         <div class="row">
             {% for object in measurements %}
                 <div class="card" style="width:400px">
                     <div class="card-header">{{ object.id }}</div>
-                    <img class="card-img-top" src="{{ object.image }}" style="width:100%">
+                    <img class="card-img-top" src="{{ object.image.url }}" style="width:100%">
                     <div class="card-body">
                         <p class="card-text">Date: {{ object.timestamp }}</p> <!-- create formating -->
                         <p class="card-text">Time: {{ object.timestamp }}</p> <!-- create formating -->

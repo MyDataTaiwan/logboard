@@ -17,8 +17,6 @@ CRITICAL_TEMP  = 37.5
 logger = logging.getLogger('models')
 
 # TODO 001 Aggregate the timestamps specific day get the max temp. and min. temp
-# TODO Change default values to something more useful    
-# TODO Write the class to store the authorised hashes from the user to generate the unique dashboard
 # TODO Body Temperature needs to be converted if Farenheit, or Celcius
 class Measurement(models.Model):
     title = 'dashboard'
@@ -46,14 +44,13 @@ class Measurement(models.Model):
     soreThroat = models.IntegerField(default=0)
     tasteLoss = models.IntegerField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(default='mylog14-03.png', upload_to='custodian_pics')
+    image = models.ImageField(default='/media/custodian_pics/mylog14-03_YSaAO0C.png', upload_to='media/custodian_pics')
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     accuracy = models.FloatField(default=0.0)
     
     def get_absolute_url(self):
         return reverse('dashboard-detail', kwargs={'slug': self.userHash})
-
 
 class AuthCustodianHashes(models.Model):
     userHash = models.SlugField(max_length=100, default='test_hash')
