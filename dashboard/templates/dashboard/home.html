@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+{% block javascript %}
+<script>
+    $("#hash-table tr").click(function(){
+        var url = $(this).children().closest("td").html();
+        location.replace("http://127.0.0.1:8000/dashboard/" + url)
+    });
+  </script>
+{% endblock %}
+{% block content %}
+<div class="navbar-header">
+    <a class="navbar-brand" href="#">MyLog14</a>
+</div> 
+<div id="hash-table-section" class="container-fluid bg-light" style="padding-top:70px;padding-bottom:70px">
+    <div class="row">
+        <div class="table-responsive">
+        <table id="hash-table" align="center" style="width:100%" class="table table-hover">
+          <tr>
+            <th>Custodian Hash</th>
+            <th>Review Status</th>
+            <th>Last Acccesed</th>
+          </tr>
+            {% for object in hashes %}
+            <tr href="{% url 'dashboard-details' object.userHash %}">
+                <td>{{ object.userHash }}</td>
+                <td>{{ object.reviewStatus }}</td>
+                <td>{{ object.lastChange }}</td>
+            </tr>
+            {% endfor %}
+          </tr>
+        </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

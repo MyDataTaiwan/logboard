@@ -3,24 +3,23 @@ from django.http import JsonResponse
 from django.views.generic import(
     ListView,
     DetailView,
+    TemplateView,
     DeleteView
 )
 
 from datetime import datetime
 import pandas as pd
 import requests, logging
-from .models import Measurement
+from .models import Measurement, AuthCustodianHashes
 
 
 #Create a logger instance
 logger = logging.getLogger('views')
 
-
-
 class DashboardHomeView(ListView):
-    model = Measurement
+    model = AuthCustodianHashes
     template_name = 'dashboard/home.html'
-    context_object_name = 'measurements'
+    context_object_name = 'hashes'
 
 class DashboardView(ListView):
     model = Measurement
@@ -28,8 +27,8 @@ class DashboardView(ListView):
     context_object_name = 'measurements'
 
     def get_queryset(self):
-        userHash = 'test_hash'
-        return Measurement.objects.filter(userHash = userHash).order_by('timestamp')
+        userHash = get_object_or_404(Measurement, userHash=self.kwargs.get('userHash'))
+        return Measurement.objects.filter(userHash=userHash).order_by('-timestamp')
 
 
 class LineChartView(DetailView):
