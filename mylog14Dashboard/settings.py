@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD:mylog14Dashboard/mylog14Dashboard/settings.py
     'rest_framework',
     'api.v1.records',
+=======
+>>>>>>> master:mylog14Dashboard/settings.py
     ]
 
 MIDDLEWARE = [
@@ -153,9 +156,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_ROOT = '/var/www/html/static'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/html/static'
 
 # SSL
 

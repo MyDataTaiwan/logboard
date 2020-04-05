@@ -83,18 +83,17 @@ $(function () {
 </script>
 {% endblock %}
 {% block content %}
-<div class="uk-flex">
-    <div id="section1" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
-        <h1 class="uk-background-primary">Chart and Map</h1>
-        <div class="row">
-            <div class="uk-background-muted uk-flex-first">
-                <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
-            </div>
-            <hr class="uk-divider-vertical">
-            <div class="col-sm-4 uk-background-muted"><div id="mapid"></div></div>
+<div id="section1" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
+    <h1 class="uk-background-primary">Chart and Map</h1>
+    <div class="uk-grid">
+        <div class="uk-width-3-10 uk-background-muted">
+            <div id="mapid"></div>
+        </div>
+        <div class="uk-width-7-10 uk-background-muted">
+            <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
         </div>
     </div>
-</div>  
+</div>
 <hr class="uk-divider-icon">
 <!-- This Section is for the Data Table, it should be more or less fine -->
 <div id="section2" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
