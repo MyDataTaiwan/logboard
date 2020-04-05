@@ -90,12 +90,12 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/Users/tweisskopf/Documents/02_Development/CodeVsCovid19/log/debug.log',
+            'filename': '/var/log/mylog14/debug.log',
         },
         'sec_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/Users/tweisskopf/Documents/02_Development/CodeVsCovid19/log/security.log',
+            'filename': '/var/log/mylog14/security.log',
         },
     },
     'loggers': {
