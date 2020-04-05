@@ -1,0 +1,45 @@
+body {
+  background: #e1eef6;
+  color: #333333;
+  margin-top: 5rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+ul {
+  margin: 0;
+}
+
+.uk-section-muted{
+  background-color: #fffff5;
+  color: #5c196b;
+}
+
+.uk-background-muted{
+  background-color: #fffff5;
+  color: #5c196b;
+}
+
+.uk-background-primary{
+  background-color: #5c196b;
+  color: #fffff5;
+}
+
+
+
+#line-chart { height: 675px; }
+#mapid { height: 675px; }
+
+.site-header .navbar-nav .nav-link {
+color: #e1eef6;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #e1eef6;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
