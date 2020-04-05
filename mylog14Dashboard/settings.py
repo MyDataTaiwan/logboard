@@ -40,11 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD:mylog14Dashboard/mylog14Dashboard/settings.py
     'rest_framework',
     'api.v1.records',
-=======
->>>>>>> master:mylog14Dashboard/settings.py
     ]
 
 MIDDLEWARE = [
