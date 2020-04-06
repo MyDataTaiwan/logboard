@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'mylog14.numbersprotocol.io',
+    '127.0.0.1',
 ]
 
 
