@@ -4,6 +4,18 @@ Frontend for government employees to track custodian data, built on Django Frame
 
 Dependencies can be found in requirements.txt
 
-## TODOs
+# Setup
 
+```
+$ python3 -m pip install Django
+$ python3 -m pip install -r requirements.txt
+```
 
+Testing by development server. You need to comment-out the SSL session in `g14Dashboard/settings.py`:
+
+```
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+$ python3 manage.py runserver
+$ sensible-browser http://127.0.0.1:8000
+```
