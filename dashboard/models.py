@@ -28,6 +28,7 @@ class Measurement(models.Model):
         (FARENHEIT, 'F')
     ]
 
+    user_token = models.IntegerField(default=0)
     userHash = models.SlugField(max_length=100, default='test_hash')
     bodyTemperature = models.FloatField(default=36.5)
     bodyTemperatureUnit = models.CharField(
@@ -37,17 +38,9 @@ class Measurement(models.Model):
     )
     bodyTemperatureMAX = models.FloatField(default=MAX_BODY_TEMP)
     bodyTemperatureMIN = models.FloatField(default=MIN_BODY_TEMP)
-    bodyTemperatureCRITICAL = models.FloatField(default=CRITICAL_TEMP)
-    coughing = models.IntegerField(default=0)
-    headache = models.IntegerField(default=0)
-    runnyNose = models.IntegerField(default=0)
-    soreThroat = models.IntegerField(default=0)
-    tasteLoss = models.IntegerField(default=0)
+    bodyTemperatureCRITICAL = models.FloatField(default=CRITICAL_TEMP))
     timestamp = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(default='/media/custodian_pics/mylog14-03_YSaAO0C.png', upload_to='media/custodian_pics')
-    latitude = models.FloatField(default=0.0)
-    longitude = models.FloatField(default=0.0)
-    accuracy = models.FloatField(default=0.0)
+    image_id = models.IntegerField(default=0)
     
     def get_absolute_url(self):
         return reverse('dashboard-detail', kwargs={'slug': self.userHash})
@@ -56,3 +49,22 @@ class AuthCustodianHashes(models.Model):
     userHash = models.SlugField(max_length=100, default='test_hash')
     reviewStatus = models.IntegerField(default=0)
     lastChange = models.DateTimeField(default=timezone.now)
+
+class Snapshot(models.Model):
+    timestamp = models.DateTimeField(default=timezone.now)
+    latitude = models.FloatField(default=0.0) 24.9985271,
+    longitude = models.FloatField(default=0.0: 121.4570335,
+    accuracy = models.FloatField(default=0.0)
+
+class Condition(models.Model):
+    timestamp = models.models.ForeignKey("Measurement", verbose_name=_(""), on_delete=models.CASCADE)
+    coughing = models.IntegerField(default=0)
+    headache = models.IntegerField(default=0)
+    runnyNose = models.IntegerField(default=0)
+    soreThroat = models.IntegerField(default=0
+    tasteLoss = models.IntegerField(default=0)
+
+class Photos(models.Model):
+    photo_id = models.IntegerField(default=0)
+    file_path = models.ImageField(default='/media/custodian_pics/mylog14-03_YSaAO0C.png', upload_to='media/custodian_pics'))0)
+
