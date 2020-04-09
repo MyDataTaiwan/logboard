@@ -26,7 +26,7 @@ class DashboardView(ListView):
     context_object_name = 'measurements'
 
     def get_queryset(self):
-        userHash = '9d54e1076976a0a287de0dc1c51ae3a23d876556d0dab99' #get_object_or_404(Measurement, userHash=self.kwargs.get('userHash'))
+        userHash = 'test_hash' #get_object_or_404(Measurement, userHash=self.kwargs.get('userHash'))
         return Measurement.objects.filter(userHash=userHash).order_by('-timestamp')
 
 

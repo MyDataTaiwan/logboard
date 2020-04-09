@@ -38,7 +38,7 @@ class Measurement(models.Model):
     )
     bodyTemperatureMAX = models.FloatField(default=MAX_BODY_TEMP)
     bodyTemperatureMIN = models.FloatField(default=MIN_BODY_TEMP)
-    bodyTemperatureCRITICAL = models.FloatField(default=CRITICAL_TEMP))
+    bodyTemperatureCRITICAL = models.FloatField(default=CRITICAL_TEMP)
     timestamp = models.DateTimeField(default=timezone.now)
     image_id = models.IntegerField(default=0)
     
@@ -52,19 +52,19 @@ class AuthCustodianHashes(models.Model):
 
 class Snapshot(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
-    latitude = models.FloatField(default=0.0) 24.9985271,
-    longitude = models.FloatField(default=0.0: 121.4570335,
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
     accuracy = models.FloatField(default=0.0)
 
 class Condition(models.Model):
-    timestamp = models.models.ForeignKey("Measurement", verbose_name=_(""), on_delete=models.CASCADE)
+    timestamp = models.ForeignKey("Measurement", on_delete=models.CASCADE)
     coughing = models.IntegerField(default=0)
     headache = models.IntegerField(default=0)
     runnyNose = models.IntegerField(default=0)
-    soreThroat = models.IntegerField(default=0
+    soreThroat = models.IntegerField(default=0)
     tasteLoss = models.IntegerField(default=0)
 
 class Photos(models.Model):
     photo_id = models.IntegerField(default=0)
-    file_path = models.ImageField(default='/media/custodian_pics/mylog14-03_YSaAO0C.png', upload_to='media/custodian_pics'))0)
+    file_path = models.ImageField(default='/media/custodian_pics/mylog14-03_YSaAO0C.png', upload_to='media/custodian_pics')
 
