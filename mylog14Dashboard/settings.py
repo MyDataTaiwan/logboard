@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'rest_framework',
     'api.v1.records',
+    'applications.archives',
     ]
 
 MIDDLEWARE = [
@@ -175,3 +177,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 UNIQUE_URL_OBJECT : 'Measurement'
 UNIQUE_EXP_DATE : 72
 UNIQUE_MAX_CLICS : 35
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
