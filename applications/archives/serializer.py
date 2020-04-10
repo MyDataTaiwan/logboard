@@ -1,11 +1,15 @@
 import logging
 
-from rest_framework import serializers
 from django_celery_results.models import TaskResult
+from jsonfield import JSONField
+from rest_framework import serializers
+
 from applications.archives.models import Archive
+from applications.archives.models import Records
 from applications.archives.validators import validate_file_extension
 #from applications.data_owners.models import DataOwner
 #from applications.data_owners.serializer import DataOwnerSerializer
+
 
 logger = logging.getLogger(__name__)
 

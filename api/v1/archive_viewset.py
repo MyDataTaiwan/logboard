@@ -1,4 +1,5 @@
 from datetime import datetime
+import shutil
 import logging
 import os
 import time
@@ -16,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
 from applications.archives.models import Archive
+from applications.archives.models import Records
 from applications.archives.serializer import ParserTaskSerializer
 from applications.archives.serializer import ArchiveSerializer
 #from applications.archives.serializer import ArchiveAnalysisSerializer
@@ -90,7 +92,9 @@ class ArchiveViewset(viewsets.ModelViewSet):
             #task_serializer = ParserTaskSerializer(task)
             #return Response(task_serializer.data, status.HTTP_201_CREATED)
             filepath = os.path.join(tmp_dir, file_name)
-            unzip(filepath, tmp_dir)
+            target_dirpath = unzip(filepath, tmp_dir)
+            update_records_table(target_dirpath)
+            clean(filepath, target_dirpath)
             return Response('got posted zip', status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status.HTTP_400_BAD_REQUEST)
 
@@ -107,8 +111,32 @@ def unzip(filepath, root_dirpath, target_dirname=''):
     print('TargetDir: {}'.format(target_dirpath))
     with zipfile.ZipFile(filepath, 'r') as zip_ref:
         zip_ref.extractall(target_dirpath)
-    os.remove(filepath)
     return target_dirpath
+
+
+def update_records_table(target_dirpath):
+    """Read records in target dir and add into database.
+    """
+    json_filepaths = [os.path.join(target_dirpath, filename)
+                      for filename in os.listdir(target_dirpath)]
+    identity = os.path.basename(target_dirpath)
+    print('JSON files: {}'.format(json_filepaths))
+    print('Identity: ' + identity)
+    for filepath in json_filepaths:
+        with open(filepath) as f:
+            content = json.load(f)
+            r = Records(identity = identity,
+                        timestamp = content['timestamp'],
+                        content = content)
+            r.save()
+    print('Records: {}'.format(Records.objects.all()))
+
+
+def clean(filepath, target_dirpath):
+    print('Delete {}'.format(filepath))
+    print('Delete {}'.format(target_dirpath))
+    os.remove(filepath)
+    shutil.rmtree(target_dirpath)
 
 
 @shared_task(track_started=True)
