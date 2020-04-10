@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'rest_framework',
     'api.v1.records',
+    'applications.archives',
     ]
 
 MIDDLEWARE = [
@@ -169,3 +171,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Celery
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
