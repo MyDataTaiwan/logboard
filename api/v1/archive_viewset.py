@@ -114,8 +114,8 @@ def unzip(filepath, root_dirpath, target_dirname=''):
     if target_dirname == '':
         target_dirname = str(uuid.uuid4())
     target_dirpath = os.path.join(root_dirpath, target_dirname)
-    print('FilePath: {}'.format(filepath))
-    print('TargetDir: {}'.format(target_dirpath))
+    print(f'FilePath: {filepath}')
+    print(f'TargetDir: {target_dirpath}')
     with zipfile.ZipFile(filepath, 'r') as zip_ref:
         zip_ref.extractall(target_dirpath)
     return target_dirpath
@@ -135,9 +135,9 @@ def update_records_table(target_dirpath):
     mapping = transaction_mapping(
                   os.path.join(target_dirpath,
                                'verification.json'))
-    print('JSON files: {}'.format(json_filepaths))
+    print(f'JSON files: {json_filepaths}')
     print('Identity: ' + identity)
-    print('Mapping: {}'.format(mapping))
+    print(f'Mapping: {mapping}')
     for filepath in json_filepaths:
         filename = os.path.basename(filepath)
 
@@ -161,19 +161,19 @@ def update_records_table(target_dirpath):
                         content = content,
                         verification = verification)
             r.save()
-    print('Records: {}'.format(Records.objects.all()))
+    print(f'Records: {Records.objects.all()}')
 
 
 def clean(filepath, target_dirpath):
-    print('Delete {}'.format(filepath))
-    print('Delete {}'.format(target_dirpath))
+    print(f'Delete {filepath}')
+    print(f'Delete {target_dirpath}')
     os.remove(filepath)
     shutil.rmtree(target_dirpath)
 
 
 def create_access_url(unique_id):
-    print('Use unique ID {} to get records from database'.format(unique_id))
-    access_url = 'https://mylog14.numbersprotocol.io/dashboard/{}'.format(unique_id)
+    print(f'Use unique ID {unique_id} to get records from database')
+    access_url = f'https://mylog14.numbersprotocol.io/dashboard/{unique_id}'
     return access_url
 
 

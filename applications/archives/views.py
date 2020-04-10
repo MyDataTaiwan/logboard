@@ -39,11 +39,13 @@ class DashboardHomeView(ListView):
 
 
 class LineChart(APIView):
+    model = Records
+
     labels = []
     data = []
 
-    queryset = Records.objects.values('timestamp','review_status').annotate(dcount=Count('review_status'))
-
+# TODO: dig into the content to retrieve body temp
+    queryset = Records.objects.values('timestamp','review_status','content').order_by('-timestamp')
     for entry in queryset:
         labels.append(entry['timestamp'])
         data.append(entry['review_status'])
