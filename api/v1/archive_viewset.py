@@ -95,7 +95,9 @@ class ArchiveViewset(viewsets.ModelViewSet):
             target_dirpath = unzip(filepath, tmp_dir)
             update_records_table(target_dirpath)
             clean(filepath, target_dirpath)
-            return Response('got posted zip', status.HTTP_201_CREATED)
+            identity = os.path.basename(target_dirpath)
+            access_url = create_access_url(identity)
+            return Response(access_url, status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status.HTTP_400_BAD_REQUEST)
 
 
@@ -127,7 +129,8 @@ def update_records_table(target_dirpath):
             content = json.load(f)
             r = Records(identity = identity,
                         timestamp = content['timestamp'],
-                        content = content)
+                        content = content,
+                        verification = True)
             r.save()
     print('Records: {}'.format(Records.objects.all()))
 
@@ -137,6 +140,12 @@ def clean(filepath, target_dirpath):
     print('Delete {}'.format(target_dirpath))
     os.remove(filepath)
     shutil.rmtree(target_dirpath)
+
+
+def create_access_url(unique_id):
+    print('Use unique ID {} to get records from database'.format(unique_id))
+    access_url = 'https://mylog14.numbersprotocol.io/<unique_id>'
+    return access_url
 
 
 @shared_task(track_started=True)

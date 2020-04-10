@@ -30,3 +30,4 @@ class Records(models.Model):
     timestamp = models.IntegerField(default=0)
     identity = models.CharField(max_length=50)
     content = JSONField()
+    verification = models.BooleanField(default=False)
