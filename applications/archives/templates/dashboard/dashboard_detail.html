@@ -1,8 +1,6 @@
 {% extends "dashboard/base.html" %}
 {% block javascript %}
 <script>
-  {% block jquery %} 
-
   var $lineChart = $("#line-chart");
   $.ajax({
     method: "GET",
@@ -10,29 +8,32 @@
     success: function(data){
       var ctx = document.getElementById("line-chart").getContext('2d');
       var myChart = new Chart(ctx, {
-          type: 'bar',
+          type: 'line',
           data: {
               labels: data.labels,
               datasets: [{
                   label: 'Records',
-                  data: data.data,
-                  backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                  ],
+                  data: data.record,
                   borderColor: [
                       'rgba(255,99,132,1)',
                   ],
-                  borderWidth: 1
-              }]
+                  borderWidth: 2
+              },
+              {
+                label: 'CRITICAL',
+                data: data.threshold,
+                borderColor: 'rgba(255, 188, 66, 1)',
+                fill: false,
+          }]
           },
           options: {
               reponsive: true,
               scales: {
                   yAxes: [{
                       ticks: {
-                          min:0,
-                          max:1
-                      }
+                          min:35,
+                          max:43
+                     }
                   }]
               }
           }
@@ -42,18 +43,32 @@
       console.log(error_data)
     }
   })
-  {% endblock %}
+</script>
+<script>
+var $location-mapping = $("#location-mapping");
+    const home_location = [24.953606,121,4095702]
+    const mymap = L.map('location-mapping').setView(home_location, 13);
+
+    const marker = L.marker(home_location).addTo(myLocations);
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1
+    }).addTo(myLocations);
 </script>
 {% endblock %}
 {% block content %}
-<h1>Dashboard</h1>
-<div id="section1" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
-    <h1 class="uk-background-primary">Chart and Map</h1>
-    <div class="uk-grid">
-        <div class="uk-width-7-10 uk-background-muted">
-            <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
-        </div>
-    </div>
+<h1 class="uk-background-primary">Chart and Map</h1>
+<div class="uk-card uk-card-small uk-card-default">
+ <div id="location-mapping" style="width: 600px; height: 400px; position: relative; outline: none;"></div>
+ </div>
+<div class="uk-card uk-card-large uk-card-default">
+<canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
 </div>
 <hr class="uk-divider-icon">
 <!-- This Section is for the Data Table, it should be more or less fine -->

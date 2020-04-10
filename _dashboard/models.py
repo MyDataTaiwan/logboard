@@ -13,10 +13,6 @@ from PIL import Image
 
 import logging
 
-# Temperature Constants for verification and line threshhold
-MIN_BODY_TEMP = 35
-MAX_BODY_TEMP = 42
-CRITICAL_TEMP  = 37.5
 
 logger = logging.getLogger('models')
 

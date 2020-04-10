@@ -21,57 +21,72 @@ from .models import Records
 #Create a logger instance
 logger = logging.getLogger('__name__')
 
-
+# TODO filter the irrelevant ones out with queryset filter, get filter argumeent from URL
 class ReviewHomeView(ListView):
     model = Records
     template_name = 'dashboard/home.html'
     context_object_name = "records"
     queryset = Records.objects.values('identity').annotate(dcount=Count('identity'))
 
-    # TODO: in Productive DB it might be better to use this
-    #queryset =  Records.objects.order_by('-review_status').distinct('identity')
-
 class DashboardHomeView(ListView):
     model = Records
     template_name = 'dashboard/dashboard_detail.html'
     context_object_name = 'records'
+
+    # TODO: GRAB THE custodian hash (unique URL) from the URL to filter by relevant entries
+    custodian_hash = ""
+
     queryset = Records.objects.order_by('timestamp')
 
 
 class LineChart(APIView):
+    # Temperature Constants for verification and line threshhold
+    MAX_BODY_TEMP = 42
+    CRITICAL_TEMP  = 37.5
+
     model = Records
 
     labels = []
-    data = []
+    record = []
+    threshold = []
 
 # TODO: dig into the content to retrieve body temp
-    queryset = Records.objects.values('timestamp','review_status','content').order_by('-timestamp')
+    queryset = Records.objects.values('timestamp','content').order_by('timestamp')
     for entry in queryset:
         labels.append(entry['timestamp'])
-        data.append(entry['review_status'])
+        record.append(entry['content']['bodyTemperature'])
+        threshold.append(CRITICAL_TEMP)
 
 
     def get(self, request, format=None):
         data = {
             "labels": self.labels,
-            "data": self.data,
+            "record": self.record,
+            "threshold": self.threshold
         }   
-
         return Response(data)
 
-def map_locations(request):
+
+class MapView(APIView):
+    model = Records
+
+    labels = []
     latitude = []
     longitude = []
 
-    queryset = Records.objects.order_by('timestamp')
-    for measurement in queryset:
-        latitude.append(measurement.latitude)
-        longitude.append(measurement.longitude)
+    queryset = Records.objects.values('timestamp','content').order_by('timestamp')
+    for entry in queryset:
+        labels.append(entry['timestamp'])
+        latitude.append(entry['content']['bodyTemperature'])
+        longitude.append(entry['content']['bodyTemperature'])
 
-    return JsonResponse(data={
-        'latitude': latitude,
-        'longitude': longitude,
-    })
+    def get(self, request, format=None):
+        data = {
+            "labels": self.labels,
+            "latitude": self.latitude,
+            "longitude": self.longitude
+        }   
+        return Response(data)
 
 
 class RecordsDeleteView(DeleteView):
