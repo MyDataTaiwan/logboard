@@ -10,6 +10,7 @@ import zipfile
 from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django_celery_results.models import TaskResult
+from niota import verify
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -25,7 +26,11 @@ from applications.archives.serializer import ArchiveSerializer
 #from applications.data_owners.serializer import DataOwnerSerializer
 #from bitsocial_tasks.tasks import parse_archive
 
+
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+verify_obj = verify.NumbersVerify(logger)
+
 
 class ArchiveViewset(viewsets.ModelViewSet):
     serializer_class = ArchiveSerializer
@@ -116,21 +121,45 @@ def unzip(filepath, root_dirpath, target_dirname=''):
     return target_dirpath
 
 
+def transaction_mapping(verification_filepath):
+    with open(verification_filepath) as f:
+        return json.load(f)
+
+
 def update_records_table(target_dirpath):
     """Read records in target dir and add into database.
     """
     json_filepaths = [os.path.join(target_dirpath, filename)
                       for filename in os.listdir(target_dirpath)]
     identity = os.path.basename(target_dirpath)
+    mapping = transaction_mapping(
+                  os.path.join(target_dirpath,
+                               'verification.json'))
     print('JSON files: {}'.format(json_filepaths))
     print('Identity: ' + identity)
+    print('Mapping: {}'.format(mapping))
     for filepath in json_filepaths:
-        with open(filepath) as f:
+        filename = os.path.basename(filepath)
+
+        # Skip the verification file because it does not contain a record,
+        # but contains the ledger transaction mapping.
+        if filename == 'verification.json':
+            continue
+
+        with open(filepath, 'r', encoding='utf-8') as f:
             content = json.load(f)
+            print('bundlehash: {}'.format(mapping[filename]))
+            try:
+                verification = verify_obj.verify(mapping[filename], content)
+            except Exception as e:
+                print(e)
+                print('Failed bundlehash: {}'.format(mapping[filename]))
+                verification = False
+            print('verification: {}'.format(verification))
             r = Records(identity = identity,
                         timestamp = content['timestamp'],
                         content = content,
-                        verification = True)
+                        verification = verification)
             r.save()
     print('Records: {}'.format(Records.objects.all()))
 
@@ -144,7 +173,7 @@ def clean(filepath, target_dirpath):
 
 def create_access_url(unique_id):
     print('Use unique ID {} to get records from database'.format(unique_id))
-    access_url = 'https://mylog14.numbersprotocol.io/<unique_id>'
+    access_url = 'https://mylog14.numbersprotocol.io/dashboard/{}'.format(unique_id)
     return access_url
 
 
