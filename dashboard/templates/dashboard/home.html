@@ -1,11 +1,5 @@
 {% extends "dashboard/base.html" %}
 {% block javascript %}
-<script>
-    $("#hash-table tr").click(function(){
-        var url = $(this).children().closest("td").html();
-        location.replace("http://localhost:8000/dashboard/" + 'test_hash')
-    });
-  </script>
 {% endblock %}
 {% block content %}
 <div class="navbar-header">
@@ -22,9 +16,8 @@
             <th class="uk-width-small">Acccesed</th>
           </tr>
             {% for object in hashes %}
-            <tr href="{% url 'dashboard-details' object.userHash %}">
-                <td><button class="uk-button uk-button-default" type="button">Review</button></td>
-                <td>{{ object.userHash }}</td>
+            <tr>
+                <td><a class="article-title"  href="{% url 'dashboard-details' object.userHash %}">{{ object.userHash }}</td>
                 <td>{{ object.reviewStatus }}</td>
                 <td>{{ object.lastChange }}</td>
             </tr>

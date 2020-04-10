@@ -20,58 +20,51 @@ class DashboardHomeView(ListView):
     template_name = 'dashboard/home.html'
     context_object_name = 'hashes'
 
-class DashboardView(ListView):
+class DashboardDetailView(DetailView):
     model = Measurement
-    template_name = 'dashboard/dashboard_detail.html'
-    context_object_name = 'measurements'
 
-    def get_queryset(self):
-        userHash = 'test_hash' #get_object_or_404(Measurement, userHash=self.kwargs.get('userHash'))
-        return Measurement.objects.filter(userHash=userHash).order_by('-timestamp')
+    def line_chart(self, request):
+        labels = []
+        body_temperature = []
+        body_temperature_MAX = []
+        body_temperature_MIN = []
+        body_temperature_CRITICAL = []
 
+        queryset = Measurement.objects.order_by('timestamp')
 
-def line_chart(request):
-    labels = []
-    body_temperature = []
-    body_temperature_MAX = []
-    body_temperature_MIN = []
-    body_temperature_CRITICAL = []
+        for measurement in queryset:
+            labels.append(measurement.timestamp)
+            body_temperature.append(measurement.bodyTemperature)
+            body_temperature_MAX.append(measurement.bodyTemperatureMAX)
+            body_temperature_MIN.append(measurement.bodyTemperatureMIN)
+            body_temperature_CRITICAL.append(measurement.bodyTemperatureCRITICAL)
 
-    queryset = Measurement.objects.order_by('timestamp')
+        return JsonResponse(data={
+            'labels': labels,
+            'body_temperature': body_temperature,
+            'body_temperature_MAX': body_temperature_MAX,
+            'body_temperature_MIN': body_temperature_MIN,
+            'body_temperature_CRITICAL': body_temperature_CRITICAL,
 
-    for measurement in queryset:
-        labels.append(measurement.timestamp)
-        body_temperature.append(measurement.bodyTemperature)
-        body_temperature_MAX.append(measurement.bodyTemperatureMAX)
-        body_temperature_MIN.append(measurement.bodyTemperatureMIN)
-        body_temperature_CRITICAL.append(measurement.bodyTemperatureCRITICAL)
+        })
 
-    return JsonResponse(data={
-        'labels': labels,
-        'body_temperature': body_temperature,
-        'body_temperature_MAX': body_temperature_MAX,
-        'body_temperature_MIN': body_temperature_MIN,
-        'body_temperature_CRITICAL': body_temperature_CRITICAL,
+    def map_locations(self, request):
+        latitude = []
+        longitude = []
 
-    })
+        queryset = Measurement.objects.order_by('timestamp')
+        for measurement in queryset:
+            latitude.append(measurement.latitude)
+            longitude.append(measurement.longitude)
 
-def map_locations(request):
-    latitude = []
-    longitude = []
-
-    queryset = Measurement.objects.order_by('timestamp')
-    for measurement in queryset:
-        latitude.append(measurement.latitude)
-        longitude.append(measurement.longitude)
-
-    return JsonResponse(data={
-        'latitude': latitude,
-        'longitude': longitude,
-    })
+        return JsonResponse(data={
+            'latitude': latitude,
+            'longitude': longitude,
+        })
 
 
-class MeasurementsDeleteView(DeleteView):
-    model = Measurement
-    success_url = '/'
+    class MeasurementsDeleteView(DeleteView):
+        model = Measurement
+        success_url = '/'
 
-    #TODO Implement the function to drop the table
+        #TODO Implement the function to drop the table
