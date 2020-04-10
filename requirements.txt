@@ -18,6 +18,7 @@ lazy-object-proxy==1.4.3
 Markdown==3.2.1
 MarkupSafe==1.1.1
 mccabe==0.6.1
+niota==0.1.0
 numpy==1.18.2
 pandas==1.0.3
 Pillow==7.1.1
