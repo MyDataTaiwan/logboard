@@ -39,9 +39,7 @@ class Records(models.Model):
     identity = models.CharField(max_length=50)
     content = JSONField()
     verification = models.BooleanField(default=False)
-
-
-class AuthCustodianHashes(models.Model):
-    userHash = models.SlugField(max_length=100, default='12')
-    reviewStatus = models.IntegerField(default=0)
-    lastChange = models.DateTimeField(default=timezone.now)
+    review_status = models.IntegerField(default=0)
+    first_access = models.DateTimeField(default=timezone.now,blank=True)
+    last_change = models.DateTimeField(default=timezone.now,blank=True)
+    expiration_date = models.DateTimeField(default=timezone.now,blank=True)
