@@ -77,8 +77,8 @@ class MapView(APIView):
     queryset = Records.objects.values('timestamp','content').order_by('timestamp')
     for entry in queryset:
         labels.append(entry['timestamp'])
-        latitude.append(entry['content']['bodyTemperature'])
-        longitude.append(entry['content']['bodyTemperature'])
+        latitude.append(entry['content']['locationStamp']['latitude'])
+        longitude.append(entry['content']['locationStamp']['longitude'])
 
     def get(self, request, format=None):
         data = {

@@ -45,28 +45,19 @@
   })
 </script>
 <script>
-var $location-mapping = $("#location-mapping");
-    const home_location = [24.953606,121,4095702]
-    const mymap = L.map('location-mapping').setView(home_location, 13);
-
-    const marker = L.marker(home_location).addTo(myLocations);
-
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1
-    }).addTo(myLocations);
+    const $locationMapping = $("#location-mapping");
+    $("button").click(function(){
+     $.ajax({url: $lineChart.data("url"), success: function(data){
+    $("#location-mapping").html(data.timestamp);
+  }});
+});
 </script>
 {% endblock %}
 {% block content %}
 <h1 class="uk-background-primary">Chart and Map</h1>
 <div class="uk-card uk-card-small uk-card-default">
- <div id="location-mapping" style="width: 600px; height: 400px; position: relative; outline: none;"></div>
- </div>
+<div id="location-mapping"><h2 data-url="{% url 'location-mapping' %}">Test AJAX DATA TRANSFER</h2></div>
+<button>Get External Content</button>
 <div class="uk-card uk-card-large uk-card-default">
 <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
 </div>
