@@ -33,7 +33,7 @@ class Measurement(models.Model):
     ]
 
     user_token = models.IntegerField(default=0)
-    userHash = models.SlugField(max_length=100, default='test_hash')
+    userHash = models.SlugField(max_length=100, default='abcdefg')
     bodyTemperature = models.FloatField(default=36.5)
     bodyTemperatureUnit = models.CharField(
         max_length=1,
@@ -46,9 +46,6 @@ class Measurement(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
     image_id = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.title
-    
     def get_absolute_url(self):
         return reverse('dashboard-details', kwargs={'slug': self.userHash})
 

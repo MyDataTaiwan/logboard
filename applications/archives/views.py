@@ -1,1 +1,72 @@
+# Django Imports
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.generic import(
+    ListView,
+    DetailView,
+    TemplateView,
+    DeleteView
+)
 from rest_framework import viewsets
+import logging
+from .models import AuthCustodianHashes, Records
+
+#Create a logger instance
+logger = logging.getLogger('__name__')
+
+
+class ReviewHomeView(ListView):
+    model = AuthCustodianHashes
+    template_name = 'dashboard/home.html'
+    context_object_name = 'hashes'
+
+class DashboardHomeView(TemplateView):
+    model = Records
+    template_name = 'dashboard/dashboard_detail.html'
+    context_object_name = 'records'
+
+def line_chart(request):
+    labels = []
+    body_temperature = []
+    body_temperature_MAX = []
+    body_temperature_MIN = []
+    body_temperature_CRITICAL = []
+
+    queryset = Records.objects.order_by('timestamp')
+
+    for measurement in queryset:
+        labels.append(measurement.timestamp)
+        body_temperature.append(measurement.bodyTemperature)
+        body_temperature_MAX.append(measurement.bodyTemperatureMAX)
+        body_temperature_MIN.append(measurement.bodyTemperatureMIN)
+        body_temperature_CRITICAL.append(measurement.bodyTemperatureCRITICAL)
+
+    return JsonResponse(data={
+        'labels': labels,
+        'body_temperature': body_temperature,
+        'body_temperature_MAX': body_temperature_MAX,
+        'body_temperature_MIN': body_temperature_MIN,
+        'body_temperature_CRITICAL': body_temperature_CRITICAL,
+
+    })
+
+def map_locations(request):
+    latitude = []
+    longitude = []
+
+    queryset = Records.objects.order_by('timestamp')
+    for measurement in queryset:
+        latitude.append(measurement.latitude)
+        longitude.append(measurement.longitude)
+
+    return JsonResponse(data={
+        'latitude': latitude,
+        'longitude': longitude,
+    })
+
+
+class RecordsDeleteView(DeleteView):
+    model = Records
+    success_url = '/'
+
+    #TODO Implement the function to drop the table

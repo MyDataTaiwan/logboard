@@ -1,7 +1,15 @@
+# OS Imports
 from datetime import datetime
 
+# Djangp Imports
 from django.db import models
 from jsonfield import JSONField
+from django.utils import timezone
+from django.urls import reverse
+from django.conf import settings
+
+from PIL import Image
+
 
 
 def archive_object_key(instance, filename):
@@ -31,3 +39,9 @@ class Records(models.Model):
     identity = models.CharField(max_length=50)
     content = JSONField()
     verification = models.BooleanField(default=False)
+
+
+class AuthCustodianHashes(models.Model):
+    userHash = models.SlugField(max_length=100, default='12')
+    reviewStatus = models.IntegerField(default=0)
+    lastChange = models.DateTimeField(default=timezone.now)

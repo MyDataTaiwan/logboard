@@ -19,3 +19,6 @@ $ python3 manage.py migrate
 $ python3 manage.py runserver
 $ sensible-browser http://localhost:8000
 ```
+
+
+WARNING: DASHBOARD Code will be dropped and integrated to applications/archives

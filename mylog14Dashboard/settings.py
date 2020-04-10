@@ -85,7 +85,11 @@ WSGI_APPLICATION = 'mylog14Dashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'development.sqlite3'),
+    },
+    'productive': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'productive.sqlite3'),
     }
 }
 
