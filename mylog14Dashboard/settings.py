@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+import logging.config
 import os
+from django.utils.log import DEFAULT_LOGGING
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -92,36 +94,48 @@ DATABASES = {
     }
 }
 
-# Adding a logger for to debug and validate input to the dashboard
+# Disable Django's logging setup
+LOGGING_CONFIG = None
 
-LOGGING = {
+LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
+
+logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'django.server': DEFAULT_LOGGING['formatters']['django.server'],
+    },
     'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': './debug.log',
+        # console logs to stderr
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
         },
-        'sec_file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': './security.log',
-        },
+        'django.server': DEFAULT_LOGGING['handlers']['django.server'],
     },
     'loggers': {
-        'dashboard': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+        # default for all undefined Python modules
+        '': {
+            'level': 'WARNING',
+            'handlers': ['console'],
         },
-        'django.security.DisallowedHost': {
-            'handlers': ['sec_file'],
-            'level': 'INFO',
+        'dashboard': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
+        'noisy_module': {
+            'level': 'ERROR',
+            'handlers': ['console'],
             'propagate': False,
         },
+        # Default runserver request logging
+        'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
-}
+})
 
 
 # Password validation

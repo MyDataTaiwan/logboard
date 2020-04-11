@@ -32,10 +32,7 @@ class DashboardHomeView(ListView):
     model = Records
     template_name = 'dashboard/dashboard_detail.html'
     context_object_name = 'records'
-
-    # TODO: GRAB THE custodian hash (unique URL) from the URL to filter by relevant entries
-    custodian_hash = ""
-
+    
     def get_queryset(self):
         return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
 
@@ -51,16 +48,23 @@ class LineChart(APIView):
     record = []
     threshold = []
 
+    def custodian_hash(self):
+        custodian_hash = '8fa4a4f6-4827-4c3d-8e1e-cf548e48b988'
+        return custodian_hash
+
 # TODO: dig into the content to retrieve body temp
-    queryset = Records.objects.values('timestamp','content').order_by('timestamp')
-    
+
+    queryset = Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
+
     for entry in queryset:
-       labels.append(datetime.fromtimestamp(entry['timestamp']))
-       record.append(entry['content']['bodyTemperature'])
-       threshold.append(CRITICAL_TEMP)
+        if entry['content']['bodyTemperature'] != None:
+            labels.append(datetime.fromtimestamp(entry['timestamp']))
+            record.append(entry['content']['bodyTemperature'])
+            threshold.append(CRITICAL_TEMP)
 
 
     def get(self, request, format=None):
+
         data = {
             "labels": self.labels,
             "record": self.record,
