@@ -123,10 +123,11 @@
         {% for object in records %}
             <div class="uk-card uk-card-hover" style="width:400px">
                 <div class="uk-card-header">{{ object.id }}</div>
-                <img class="uk-card-media-top" src="data:image/jpeg;base64,{{ object.content.photos.byteString }}" alt="Red dot" style="width:100%">
+                <img class="uk-card-media-top" src="data:image/jpeg;base64,{{ object.content.photos.byteString }}" alt="" style="width:100%">
                 <div class="uk-card-body">
                     <p>Date: {{ object.timestamp|date:"D d M Y" }}</p> <!-- create formating -->
                     <p>Time: {{ object.timestamp }}</p> <!-- create formating -->
+                    <p>Photo Byte String: {{ object.content.photos }}</p> <!-- create formating -->
                     <p>Location: {{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</p>
                 </div>
             </div>

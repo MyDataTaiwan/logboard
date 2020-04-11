@@ -52,7 +52,8 @@ class LineChart(APIView):
     threshold = []
 
 # TODO: dig into the content to retrieve body temp
-    queryset = Records.objects.values('timestamp','content').order_by('timestamp')
+    queryset = Records.objects.order_by('timestamp')
+
     for entry in queryset:
         labels.append(datetime.fromtimestamp(entry['timestamp']))
         record.append(entry['content']['bodyTemperature'])
