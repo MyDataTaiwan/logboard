@@ -20,5 +20,11 @@ $ python3 manage.py runserver
 $ sensible-browser http://localhost:8000
 ```
 
+Or for convenience
+```
+alias update_mylog14='python3 manage.py makemigrations; python3 manage.py migrate; python3 manage.py runserver';  
+
+```
+
 
 WARNING: DASHBOARD Code will be dropped and integrated to applications/archives
