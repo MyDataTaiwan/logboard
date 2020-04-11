@@ -37,7 +37,7 @@ class DashboardHomeView(ListView):
         return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
 
 
-class LineChart(APIView):
+class DataView(APIView):
     # Temperature Constants for verification and line threshhold
     MAX_BODY_TEMP = 42
     CRITICAL_TEMP  = 37.5
@@ -47,12 +47,13 @@ class LineChart(APIView):
     labels = []
     record = []
     threshold = []
+    latitude = []
+    longitude = []
 
+    # Hardcoded for debug purpose TODO clean code here,
     def custodian_hash(self):
         custodian_hash = '8fa4a4f6-4827-4c3d-8e1e-cf548e48b988'
         return custodian_hash
-
-# TODO: dig into the content to retrieve body temp
 
     queryset = Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
 
@@ -62,36 +63,20 @@ class LineChart(APIView):
             record.append(entry['content']['bodyTemperature'])
             threshold.append(CRITICAL_TEMP)
 
+            #To move these to the proper place once tested.
+            latitude.append(entry['content']['locationStamp']['latitude'])
+            longitude.append(entry['content']['locationStamp']['longitude'])
+
 
     def get(self, request, format=None):
 
         data = {
             "labels": self.labels,
             "record": self.record,
-            "threshold": self.threshold
-        }   
-        return Response(data)
-
-
-class MapView(APIView):
-    model = Records
-
-    labels = []
-    latitude = []
-    longitude = []
-
-    queryset = Records.objects.values('timestamp','content').order_by('timestamp')
-    for entry in queryset:
-        labels.append(entry['timestamp'])
-        latitude.append(entry['content']['locationStamp']['latitude'])
-        longitude.append(entry['content']['locationStamp']['longitude'])
-
-    def get(self, request, format=None):
-        data = {
-            "labels": self.labels,
+            "threshold": self.threshold,
             "latitude": self.latitude,
             "longitude": self.longitude
-        }   
+        }
         return Response(data)
 
 

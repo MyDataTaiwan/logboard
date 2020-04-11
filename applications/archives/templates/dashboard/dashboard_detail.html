@@ -46,21 +46,45 @@
 </script>
 <script>
     const $locationMapping = $("#location-mapping");
-    $("button").click(function(){
-     $.ajax({url: $lineChart.data("url"), success: function(data){
-    $("#location-mapping").html(data.timestamp);
-  }});
-});
+    $(document).ready(function(){
+        $.ajax({url: $lineChart.data("url"), 
+        success: function(data) {
+
+        places = [];
+
+        places.push(["Home", 23.6978, 120.9605]);  
+
+        for (x in data.labels){
+            label = data.labels[x]
+            latitude = data.latitude[x]
+            longitude = data.longitude[x]
+            places.push([label, latitude, longitude]);
+            }
+        
+        // Making a map and tiles
+        const mymap = L.map('mapid').setView([23.6978, 120.9605], 2);
+        const attribution =
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const tiles = L.tileLayer(tileUrl, { attribution });
+        tiles.addTo(mymap);
+        
+        var i;
+        for (var i = 0; i < places.length; i++) {
+            console.log(places[i])
+			marker = new L.marker([places[i][1],places[i][2]]).bindPopup(places[i][0]).addTo(mymap);
+		}
+
+    }
+    })
+    });
 </script>
 {% endblock %}
 {% block content %}
 <h1 class="uk-background-primary">Chart and Map</h1>
-<div class="uk-card uk-card-small uk-card-default">
-<div id="location-mapping"><h2 data-url="{% url 'location-mapping' %}">Test AJAX DATA TRANSFER</h2></div>
-<button>Get External Content</button>
-<div class="uk-card uk-card-large uk-card-default">
+<div id="mapid" style="height: 500px" class="uk-background-primary" data-url="{% url 'location-mapping' %}"></div>
 <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
-</div>
 <hr class="uk-divider-icon">
 <!-- This Section is for the Data Table, it should be more or less fine -->
 <div id="section2" class="uk-section uk-section-large uk-section-muted" style="padding-top:70px;padding-bottom:70px">
