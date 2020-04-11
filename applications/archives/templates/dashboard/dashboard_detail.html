@@ -127,7 +127,7 @@
                 <div class="uk-card-body">
                     <p>Date: {{ object.timestamp|date:"D d M Y" }}</p> <!-- create formating -->
                     <p>Time: {{ object.timestamp }}</p> <!-- create formating -->
-                    <p>Photo Byte String: {{ object.content.photos }}</p> <!-- create formating -->
+                    <p>Photo Byte String: {{ object.content.photos.0 }}</p> <!-- create formating -->
                     <p>Location: {{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</p>
                 </div>
             </div>
