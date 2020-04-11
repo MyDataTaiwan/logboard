@@ -36,7 +36,8 @@ class DashboardHomeView(ListView):
     # TODO: GRAB THE custodian hash (unique URL) from the URL to filter by relevant entries
     custodian_hash = ""
 
-    queryset = Records.objects.order_by('timestamp')
+    def get_queryset(self):
+        return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
 
 
 class LineChart(APIView):
@@ -53,7 +54,7 @@ class LineChart(APIView):
 # TODO: dig into the content to retrieve body temp
     queryset = Records.objects.values('timestamp','content').order_by('timestamp')
     for entry in queryset:
-        labels.append(entry['timestamp'])
+        labels.append(datetime.fromtimestamp(entry['timestamp']))
         record.append(entry['content']['bodyTemperature'])
         threshold.append(CRITICAL_TEMP)
 
