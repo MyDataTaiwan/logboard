@@ -1,0 +1,222 @@
+{% extends "dashboard/base.html" %}
+{% block javascript %}
+<script>
+  var $lineChart = $("#line-chart");
+  $.ajax({
+    method: "GET",
+    url: $lineChart.data("url"),
+    success: function(data){
+      var ctx = document.getElementById("line-chart").getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: data.labels,
+              datasets: [{
+                  label: 'Records',
+                  data: data.record,
+                  borderColor: 'orange',
+                  borderWidth: 2,
+                  fill: false,
+                  lineTension: 0,
+              },
+              {
+                label: 'CRITICAL',
+                data: data.threshold,
+                borderColor: 'rgba(255, 99, 132, 0.5)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: false,
+                lineTension: 0,
+          },
+          {
+                label: 'MAX',
+                data: data.dead,
+                borderColor: 'rgba(255, 99, 132, 0.5)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: '-1',
+                lineTension: 0,
+          }]
+          },
+          options: {
+              reponsive: true,
+              
+          }
+      });
+    },
+    error: function(error_data){
+      console.log(error_data)
+    }
+  })
+</script>
+<script>
+    const $locationMapping = $("#location-mapping");
+    $(document).ready(function(){
+        $.ajax({url: $lineChart.data("url"), 
+        success: function(data) {
+
+        places = [];
+
+        places.push(["Home", 23.6978, 120.9605]);  
+
+        for (x in data.labels){
+            label = data.labels[x]
+            latitude = data.latitude[x]
+            longitude = data.longitude[x]
+            places.push([label, latitude, longitude]);
+            }
+        
+        // Making a map and tiles
+        const mymap = L.map('mapid').setView([23.6978, 120.9605], 7);
+        const attribution =
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const tiles = L.tileLayer(tileUrl, { attribution });
+        tiles.addTo(mymap);
+        
+        var i;
+        for (var i = 0; i < places.length; i++) {
+            console.log(places[i])
+			marker = new L.marker([places[i][1],places[i][2]]).bindPopup(places[i][0]).addTo(mymap);
+		}
+
+    }
+    })
+    });
+</script>
+{% endblock javascript %}
+{% block content %}
+<body>
+<div class="white-text">
+<ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
+      <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
+      <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
+      <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li>
+    </ul>
+    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+</div>
+<div style="padding-left:315px">
+  <div class="divider"></div>
+  <div id="dashboard" class="section scrollspy">
+    <div class="row">
+        <h4>Dashboard</h4>
+        <div class="col s8"><h6>Body Temperature</h6>
+            <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
+        </div>
+        <div class="col s4">
+            <h6>Locations</h6>
+            <div id="mapid" style="height: 500px" class="uk-background-primary" data-url="{% url 'location-mapping' %}"></div>
+        </div>
+        <div class="row">
+            <div class="col s12 m10">
+            <div class="card">
+                <div class="card-content blue-text">
+                <span class="card-title">Symptoms</span>
+                <div>
+                    <table id="monitoring_table" class="responsive-table">
+                        <tr>
+                        <th></th>
+                        {% for object in records %}
+                            <td>{{ object.timestamp }}</td>
+                        {% endfor %}
+                        <th>Coughing:</th>
+                        {% for object in records %}
+                            <td>{{ object.content.condition.coughing }}</td>
+                        {% endfor %}
+                        </tr>
+                        <th>Headache:</th>
+                        {% for object in records %}
+                            <td>{{ object.content.condition.headache }}</td>
+                        {% endfor %}
+                        </tr>
+                        <th>Running Nose:</th>
+                        {% for object in records %}
+                            <td>{{ object.content.condition.runnyNose }}</td>
+                        {% endfor %}
+                        </tr>
+                        <th>Sore Throat:</th>
+                        {% for object in records %}
+                            <td>{{ object.content.condition.soreThroat }}</td>
+                        {% endfor %}
+                        </tr>
+                         <th>Other Symptoms:</th>
+                        {% for object in records %}
+                            <td>{{ object.content.condition.soreThroat }}</td>
+                        {% endfor %}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </div>
+            </div>
+            <div class="col s12 m2">
+            <div class="card amber">
+                <div class="card-content white-text">
+                <span class="card-title">Description</span>
+                <p>Today I did a lot of things... </p>
+                </div>
+            </div>
+            </div>
+        </div>
+  </div>
+  <div class="divider"></div>
+  <h4>Photodiary</h4>
+  <div id="photodiary" class="section scrollspy">
+   {% for object in records %}
+    <div class="row">
+        <div class="col s12 m4">
+            <div class="card blue-text" style="height:750px">
+            <span class="card-title">{{ object.timestamp }}</span>
+                <div class="card-image">
+                {% if object.content.photos.0.byteString != None %}
+                    <img class="responsive-img" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}" style="height=500px">
+                {% else %}
+                    <img class="responsive-img" src="../../media/mylog14-03.png" style="width:100% height=500px">
+                {% endif %}           
+                </div>
+            <div class="card-content">
+            <ul>
+                <li><p>{{ object.timestamp }}</p></li>
+                <li><p>{{ object.content.photos.0.tag }}</p></li>   
+                <li><p>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</p></li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+  </div>
+  <div class="divider"></div>
+  <div id="calendar" class="section scrollspy">
+    <div class="row">
+    <h4>Calendar</h4>
+    <div class="col s12 m12">
+        <div class="card">
+            <div class="card-content blue-text">
+            <span class="card-title">April</span>
+            <div>
+                <table>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fry</th>
+                    <th>Sat</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>6</td>
+                    <td>7</td>
+                </tr>
+                </table>
+            </div>   
+        </div>
+    </div>
+</div>
+</body>
+{% endblock content %}

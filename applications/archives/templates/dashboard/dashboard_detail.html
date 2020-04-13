@@ -14,28 +14,26 @@
               datasets: [{
                   label: 'Records',
                   data: data.record,
-                  borderColor: [
-                      'rgba(255,99,132,1)',
-                  ],
-                  borderWidth: 2
+                  borderColor: 'white',
+                  backgroundColor: 'white',
+                  borderWidth: 2,
+                  fill: true,
               },
               {
                 label: 'CRITICAL',
                 data: data.threshold,
-                borderColor: 'rgba(255, 188, 66, 1)',
+                borderColor: 'yellow',
+                fill: false,
+          },
+          {
+                label: 'LOW',
+                data: data.low,
+                borderColor: 'green',
                 fill: false,
           }]
           },
           options: {
-              reponsive: true,
-              scales: {
-                  yAxes: [{
-                      ticks: {
-                          min:35,
-                          max:43
-                     }
-                  }]
-              }
+              reponsive: true
           }
       });
     },
@@ -95,7 +93,7 @@
             <tr>
             <th class="uk-background-primary">ID:</th>
             {% for object in records %}
-                <td  class="uk-background-primary">{{ object.identity }}</td>
+                <td  class="uk-background-primary">{{ object.id }}</td>
             {% endfor %}
             </tr>
             <tr>

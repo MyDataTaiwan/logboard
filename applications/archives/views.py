@@ -30,23 +30,24 @@ class ReviewHomeView(ListView):
 
 class DashboardHomeView(ListView):
     model = Records
-    template_name = 'dashboard/dashboard_detail.html'
+    template_name = 'dashboard/dashboard_detail2.html'
     context_object_name = 'records'
     
     def get_queryset(self):
-        return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
+        return Records.objects.order_by('id').filter(identity=self.kwargs['userHash'])
 
-
+# TODO 
 class DataView(APIView):
     # Temperature Constants for verification and line threshhold
-    MAX_BODY_TEMP = 42
-    CRITICAL_TEMP  = 37.5
+    MAX_BODY_TEMP = 40
+    CRITICAL_TEMP  = 38
 
     model = Records
 
     labels = []
     record = []
     threshold = []
+    dead = []
     latitude = []
     longitude = []
 
@@ -62,6 +63,7 @@ class DataView(APIView):
             labels.append(datetime.fromtimestamp(entry['timestamp']))
             record.append(entry['content']['bodyTemperature'])
             threshold.append(CRITICAL_TEMP)
+            dead.append(MAX_BODY_TEMP)
 
             #To move these to the proper place once tested.
             latitude.append(entry['content']['locationStamp']['latitude'])
@@ -74,6 +76,7 @@ class DataView(APIView):
             "labels": self.labels,
             "record": self.record,
             "threshold": self.threshold,
+            "dead": self.dead,
             "latitude": self.latitude,
             "longitude": self.longitude
         }

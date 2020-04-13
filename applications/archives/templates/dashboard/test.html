@@ -1,0 +1,33 @@
+<section id="mylog14-photodiary">
+<!-- Begin Photodiary -->
+<h1>Photodiary</h1>
+<ul class="mdc-image-list mdc-image-list--masonry my-masonry-image-list">
+  <li class="mdc-image-list__item">
+    <img class="mdc-image-list__image" src="...">
+    <div class="mdc-image-list__supporting">
+      <span class="mdc-image-list__label">Text label</span>
+    </div>
+  </li>
+  ...
+</ul>
+<!-- End Photodiary--> 
+</section>
+
+{% for object in records %}
+<div class="mdc-card mdc-card mdc-basic-with-header" style="height:350px with:350px">
+  <div class="mdc-card__primary">
+    <h2 class="mdc-card__title mdc-typography mdc-typography--headline6">{{ object.timestamp }}</h2>
+    <h3 class="mdc-card__subtitle mdc-typography mdc-typography--subtitle2"></h3>
+  </div>
+  <div class="mdc-card__primary-action mdc-card__primary-action" tabindex="0">
+    <div class="mdc-card__media mdc-card__media--16-9 mdc-card__media">
+        {% if object.content.photos.0.byteString != None %}
+            <img class="uk-card-media-top" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}" style="width:100%">
+        {% else %}
+            <img class="uk-card-media-top" src="../../media/mylog14-03.png" style="width:100%">
+        {% endif %}</div>
+    <div class="mdc-card__secondary mdc-typography mdc-typography--body2"><p></p>
+    </div>
+  </div>
+</div>
+{% endfor %}
