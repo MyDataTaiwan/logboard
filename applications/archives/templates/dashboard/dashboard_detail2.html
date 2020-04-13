@@ -87,10 +87,16 @@
 {% block content %}
 <body>
 <div class="white-text">
-<ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
-      <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
-      <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
-      <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li>
+    <ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
+        <li><div class="user-view">
+      <div class="background">
+        <img class="responsive-img" src="../../media/mylog14-03.png" style="width:100%">
+      </div>
+    </div></li>
+        <li><a href="#dashboard"><h3>MyLog14</h3></a></li>
+        <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
+        <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
+        <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li>
     </ul>
     <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 </div>
@@ -175,9 +181,9 @@
                 </div>
             <div class="card-content">
             <ul>
-                <li><p>{{ object.timestamp }}</p></li>
-                <li><p>{{ object.content.photos.0.tag }}</p></li>   
-                <li><p>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</p></li>
+                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li>
+                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.photos.0.tag }}</li>   
+                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</li>
             </ul>
             </div>
         </div>
