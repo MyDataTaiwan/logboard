@@ -88,7 +88,10 @@
 <body>
 <div class="white-text">
     <ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
-        <li><div class="user-view">
+        <li>
+            <!-- <div class="user-view"> -->
+                <div style="height: 20%;">
+
       <div class="background">
         <img class="responsive-img" src="../../media/mylog14-03.png" style="width:100%">
       </div>
@@ -113,7 +116,7 @@
             <div id="mapid" style="height: 500px" class="uk-background-primary" data-url="{% url 'location-mapping' %}"></div>
         </div>
         <div class="row">
-            <div class="col s12 m10">
+            <div class="col s16 m16">
             <div class="card">
                 <div class="card-content blue-text">
                 <span class="card-title">Symptoms</span>
@@ -158,16 +161,18 @@
             </div>
             </div>
             </div>
-            <div class="col s12 m2">
-            <div class="card amber">
-                <div class="card-content white-text">
-                <span class="card-title">Description</span>
-                <p>Today I did a lot of things... </p>
-                </div>
-            </div>
-            </div>
+
         </div>
+        
   </div>
+  <div class="col s12 m2">
+    <div class="card amber">
+        <div class="card-content white-text">
+        <span class="card-title">Description</span>
+        <p>Today I did a lot of things... </p>
+        </div>
+    </div>
+    </div>
   <div class="divider"></div>
   <h4>Photodiary</h4>
   <div id="photodiary" class="section scrollspy">
