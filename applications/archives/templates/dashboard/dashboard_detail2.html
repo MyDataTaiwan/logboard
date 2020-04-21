@@ -88,7 +88,10 @@
 <body>
 <div class="white-text">
     <ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
-        <li><div class="user-view">
+        <li>
+            <!-- <div class="user-view"> -->
+                <div style="height: 20%;">
+
       <div class="background">
         <img class="responsive-img" src="../../media/mylog14-03.png" style="width:100%">
       </div>
@@ -96,7 +99,7 @@
         <li><a href="#dashboard"><h3>MyLog14</h3></a></li>
         <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
         <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
-        <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li>
+        <!-- <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li> -->
     </ul>
     <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
 </div>
@@ -113,17 +116,20 @@
             <div id="mapid" style="height: 500px" class="uk-background-primary" data-url="{% url 'location-mapping' %}"></div>
         </div>
         <div class="row">
-            <div class="col s12 m10">
+            <div class="col s16 m16">
             <div class="card">
                 <div class="card-content blue-text">
                 <span class="card-title">Symptoms</span>
                 <div>
+                    
                     <table id="monitoring_table" class="responsive-table">
                         <tr>
                         <th></th>
                         {% for object in records %}
-                            <td>{{ object.timestamp }}</td>
+                        <td class="demo">{{ object.timestamp }}</td>
+                            <!-- <td >{{ object.timestamp }}</td> -->
                         {% endfor %}
+                    </tr>
                         <th>Coughing:</th>
                         {% for object in records %}
                             <td>{{ object.content.condition.coughing }}</td>
@@ -154,16 +160,18 @@
             </div>
             </div>
             </div>
-            <div class="col s12 m2">
-            <div class="card amber">
-                <div class="card-content white-text">
-                <span class="card-title">Description</span>
-                <p>Today I did a lot of things... </p>
-                </div>
-            </div>
-            </div>
+
         </div>
+        
   </div>
+  <div class="col s12 m2">
+    <div class="card amber">
+        <div class="card-content white-text">
+        <span class="card-title">Description</span>
+        <p>Today I did a lot of things... </p>
+        </div>
+    </div>
+    </div>
   <div class="divider"></div>
   <h4>Photodiary</h4>
   <div id="photodiary" class="section scrollspy">
@@ -171,7 +179,7 @@
     <div class="row">
         <div class="col s12 m4">
             <div class="card blue-text" style="height:750px">
-            <span class="card-title">{{ object.timestamp }}</span>
+            <span class="card-title" ><i class="demo"> {{ object.timestamp }}</i></span>
                 <div class="card-image">
                 {% if object.content.photos.0.byteString != None %}
                     <img class="responsive-img" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}" style="height=500px">
@@ -181,7 +189,10 @@
                 </div>
             <div class="card-content">
             <ul>
-                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li>
+
+                <li><a   href="#dashboard"><i class="material-icons">equalizer</i><i class="demo"> {{ object.timestamp }}</i></a></li>
+
+                <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
                 <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.photos.0.tag }}</li>   
                 <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</li>
             </ul>
@@ -192,7 +203,7 @@
   </div>
   </div>
   <div class="divider"></div>
-  <div id="calendar" class="section scrollspy">
+  <!-- <div id="calendar" class="section scrollspy">
     <div class="row">
     <h4>Calendar</h4>
     <div class="col s12 m12">
@@ -222,7 +233,23 @@
                 </table>
             </div>   
         </div>
-    </div>
+    </div> -->
 </div>
 </body>
+<script type="text/javascript">
+    // var time = {{ object.timestamp }};//列表
+    // timeStr =new Date(time*1000);
+    // console.log("timestamp",timeStr);
+    // document.getElementById("demo").innerHTML = timeStr;
+    oldText = document.getElementsByClassName("demo"); 
+    for (i = 0; i<oldText.length; i++){ 
+        newText = oldText[i].innerHTML; 
+        console.log("newText"+i,oldText[i].innerHTML)
+        newText = new Date(newText*1000);
+        console.log("newText2",newText)
+        oldText[i].innerHTML = newText; 
+        // oldText[i].innerHTML = timeStr; 
+
+        } 
+    </script>
 {% endblock content %}
