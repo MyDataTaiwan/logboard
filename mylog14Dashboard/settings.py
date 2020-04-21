@@ -28,7 +28,7 @@ SECRET_KEY = '#75417%bz(fw$p_2qu=u0#=y)2=rqi=pd)*24q9u%7a+=u=0l3'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'mylog14.numbersprotocol.io',	
+    'mylog14.numbersprotocol.io',
     '127.0.0.1',
     'localhost'
 ]
@@ -174,9 +174,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'applications/archives/static')
 STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/html/static'
 
 # SSL
 
