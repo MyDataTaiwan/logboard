@@ -118,11 +118,14 @@
                 <div class="card-content blue-text">
                 <span class="card-title">Symptoms</span>
                 <div>
+                    
                     <table id="monitoring_table" class="responsive-table">
                         <tr>
                         <th></th>
                         {% for object in records %}
-                            <td>{{ object.timestamp }}</td>
+                        <td class="demo"></td>
+
+                            <!-- <td >{{ object.timestamp }}</td> -->
                         {% endfor %}
                         <th>Coughing:</th>
                         {% for object in records %}
@@ -171,7 +174,7 @@
     <div class="row">
         <div class="col s12 m4">
             <div class="card blue-text" style="height:750px">
-            <span class="card-title">{{ object.timestamp }}</span>
+            <span class="card-title" id="demo" ></span>
                 <div class="card-image">
                 {% if object.content.photos.0.byteString != None %}
                     <img class="responsive-img" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}" style="height=500px">
@@ -181,7 +184,22 @@
                 </div>
             <div class="card-content">
             <ul>
-                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li>
+                <script type="text/javascript">
+                    var time = {{ object.timestamp }};//列表
+                    timeStr =new Date(time*1000);
+                    console.log("timestamp",timeStr);
+                    // document.getElementById("demo").innerHTML = timeStr;
+                    oldText = document.getElementsByClassName("demo"); 
+                    for (i = 0; i<oldText.length; i++){ 
+                        
+
+                        oldText[i].innerHTML = timeStr; 
+
+                        } 
+                    </script>
+                <li><a  class="demo" href="#dashboard"><i class="material-icons">equalizer</i></a></li>
+
+                <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
                 <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.photos.0.tag }}</li>   
                 <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</li>
             </ul>
