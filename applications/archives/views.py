@@ -32,9 +32,9 @@ class DashboardHomeView(ListView):
     model = Records
     template_name = 'dashboard/dashboard_detail2.html'
     context_object_name = 'records'
-    
+
     def get_queryset(self):
-        return Records.objects.order_by('id').filter(identity=self.kwargs['userHash'])
+        return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
 
 # TODO 
 class DataView(APIView):
