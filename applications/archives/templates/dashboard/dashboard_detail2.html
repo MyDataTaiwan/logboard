@@ -128,32 +128,32 @@
                             <!-- <td >{{ object.timestamp }}</td> -->
                         {% endfor %}
                     </tr>
-                        <th>Coughing:</th>
+                        <th>Coughing</th>
                         {% for object in records %}
                             <td>{{ object.content.condition.coughing }}</td>
                         {% endfor %}
                         </tr>
-                        <th>Headache:</th>
+                        <th>Headache</th>
                         {% for object in records %}
                             <td>{{ object.content.condition.headache }}</td>
                         {% endfor %}
                         </tr>
-                        <th>Running Nose:</th>
+                        <th>Running Nose</th>
                         {% for object in records %}
                             <td>{{ object.content.condition.runnyNose }}</td>
                         {% endfor %}
                         </tr>
-                        <th>Sore Throat:</th>
+                        <th>Sore Throat</th>
                         {% for object in records %}
                             <td>{{ object.content.condition.soreThroat }}</td>
                         {% endfor %}
                         </tr>
-                         <th>Other Symptoms:</th>
+                         <th>Other Symptoms</th>
                         {% for object in records %}
                             <td>{{ object.content.condition.soreThroat }}</td>
                         {% endfor %}
                         </tr>
-                        <th>Verified:</th>
+                        <th>Verified</th>
                         {% for object in records %}
                             {% if object.verification %}
                                 <td><img src="/media/mylog14-verify.png" class="responsive-img" style="width:50%"></td>
@@ -171,46 +171,56 @@
         </div>
         
   </div>
+
   <div class="col s12 m2">
     <div class="card amber">
-        <div class="card-content white-text">
+      <div class="card-content white-text">
         <span class="card-title">Description</span>
         <p>Today I did a lot of things... </p>
-        </div>
+      </div>
     </div>
-    </div>
+  </div>
+
   <div class="divider"></div>
+
   <h4>Photodiary</h4>
   <div id="photodiary" class="section scrollspy">
-   {% for object in records %}
     <div class="row">
-        <div class="col s12 m4">
-            <div class="card blue-text">
-            <span class="card-title" ><i class="demo"> {{ object.timestamp }}</i></span>
+    {% for object in records %}
+        <div class="col s12 m4 l3">
+            <div class="card large blue-text">
+                <span class="card-title" >
+                    <div class="demo"> {{ object.timestamp }}</div>
+                </span>
+
                 <div class="card-image">
                 {% if object.content.photos.0.byteString != None %}
-                    <img class="responsive-img" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
+                    <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
                 {% else %}
-                    <img class="responsive-img" src="/media/logo.png">
+                    <img src="/media/logo.png">
                 {% endif %}           
                 </div>
-            <div class="card-content">
-            <ul>
-                <li><a   href="#dashboard"><i class="material-icons">equalizer</i><i class="demo"> {{ object.timestamp }}</i></a></li>
-                <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
-                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.photos.0.tag }}</li>   
-                <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</li>
-            </ul>
-            </div>
-            <div class="card-action">
-                {% if object.verification %}
-                    <img src="/media/mylog14-verify.png" class="responsive-img" style="width:10%">
-                {% endif %}
-            </div>
+
+                <div class="card-content">
+                    <div><i class="material-icons" style="vertical-align: middle">access_time</i><i class="demo" style="vertical-align: middle; margin-left: 5px">{{ object.timestamp }}</i></div>
+                    <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
+                    <div><i class="material-icons" style="vertical-align: middle">label_outline</i><i style="vertical-align: middle; margin-left: 5px">{{ object.content.photos.0.tag }}</i></div>
+                    <div><i class="material-icons" style="vertical-align: middle">place</i><i style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</i></div>
+                    <div>
+                    {% if object.verification %}
+                        <img src="/media/mylog14-verify.png" class="responsive-img" style="width:10%">
+                    {% endif %}
+                    </div>
+                </div>
+
+                <!--
+                <div class="card-action">
+                </div>
+                -->
+            </div>  <!-- blue-text -->
         </div>
-    </div>
     {% endfor %}
-  </div>
+    </div>
   </div>
   <div class="divider"></div>
   <!-- <div id="calendar" class="section scrollspy">
