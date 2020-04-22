@@ -155,6 +155,15 @@
                             <td>{{ object.content.condition.soreThroat }}</td>
                         {% endfor %}
                         </tr>
+                        <th>Verified:</th>
+                        {% for object in records %}
+                            {% if object.verification %}
+                                <td><img src="/media/mylog14-verify.png" class="responsive-img" style="width:50%"></td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endfor %}
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -236,20 +245,26 @@
     </div> -->
 </div>
 </body>
-<script type="text/javascript">
-    // var time = {{ object.timestamp }};//列表
-    // timeStr =new Date(time*1000);
-    // console.log("timestamp",timeStr);
-    // document.getElementById("demo").innerHTML = timeStr;
-    oldText = document.getElementsByClassName("demo"); 
-    for (i = 0; i<oldText.length; i++){ 
-        newText = oldText[i].innerHTML; 
-        console.log("newText"+i,oldText[i].innerHTML)
-        newText = new Date(newText*1000);
-        console.log("newText2",newText)
-        oldText[i].innerHTML = newText; 
-        // oldText[i].innerHTML = timeStr; 
 
-        } 
-    </script>
+<script type="text/javascript">
+    // WORKAROUND: All the timestamp DOMs is with class "demo".
+    //             Change all timestamps to datetime format.
+    let timestamps = document.getElementsByClassName("demo");
+    for (i = 0; i<timestamps.length; i++){
+        const timestamp = timestamps[i].innerHTML;
+        console.debug("timestamp #" + i, timestamps[i].innerHTML)
+        const dateobj = new Date(timestamp * 1000);  // msecs
+        console.debug("dateobj", dateobj);
+        const year = dateobj.getFullYear();
+        const month = ("0" + (dateobj.getMonth() + 1)).slice(-2);  // value: 0-11
+        const date = ("0" + dateobj.getDate()).slice(-2);
+        const hours = ("0" + dateobj.getHours()).slice(-2);
+        const minutes = ("0" + dateobj.getMinutes()).slice(-2);
+        const seconds = ("0" + dateobj.getSeconds()).slice(-2);
+        const datetime = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+        console.debug(`datetime: ${datetime}`);
+
+        timestamps[i].innerHTML = datetime;
+    }
+</script>
 {% endblock content %}
