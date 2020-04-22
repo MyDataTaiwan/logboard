@@ -121,47 +121,74 @@
                 <div>
                     
                     <table id="monitoring_table" class="responsive-table">
-                        <tr>
+                    <tr>
                         <th></th>
                         {% for object in records %}
                         <td class="demo">{{ object.timestamp }}</td>
                             <!-- <td >{{ object.timestamp }}</td> -->
                         {% endfor %}
                     </tr>
+                    <tr>
                         <th>Coughing</th>
                         {% for object in records %}
-                            <td>{{ object.content.condition.coughing }}</td>
+                            <td>
+                            {% if object.content.condition.coughing %}
+                                <i class="material-icons red-text">label</i>
+                            {% endif %}
+                            </td>
                         {% endfor %}
-                        </tr>
+                    </tr>
+                    <tr>
                         <th>Headache</th>
                         {% for object in records %}
-                            <td>{{ object.content.condition.headache }}</td>
+                            <td>
+                            {% if object.content.condition.headache %}
+                                <i class="material-icons red-text">label</i>
+                            {% endif %}
+                            </td>
                         {% endfor %}
-                        </tr>
+                    </tr>
+                    <tr>
                         <th>Running Nose</th>
                         {% for object in records %}
-                            <td>{{ object.content.condition.runnyNose }}</td>
+                            <td>
+                            {% if object.content.condition.runnyNose %}
+                                <i class="material-icons red-text">label</i>
+                            {% endif %}
+                            </td>
                         {% endfor %}
-                        </tr>
+                    </tr>
+                    <tr>
                         <th>Sore Throat</th>
                         {% for object in records %}
-                            <td>{{ object.content.condition.soreThroat }}</td>
+                            <td>
+                            {% if object.content.condition.soreThroat %}
+                                <i class="material-icons red-text">label</i>
+                            {% endif %}
+                            </td>
                         {% endfor %}
-                        </tr>
+                    </tr>
+                    <tr>
                          <th>Other Symptoms</th>
                         {% for object in records %}
-                            <td>{{ object.content.condition.soreThroat }}</td>
+                            <!-- TODO: Add "others" key in example data. -->
+                            <td>
+                            {% if object.content.condition.soreThroat %}
+                                <i class="material-icons red-text">label</i>
+                            {% endif %}
+                            </td>
                         {% endfor %}
-                        </tr>
+                    </tr>
+                    <tr>
                         <th>Verified</th>
                         {% for object in records %}
+                            <td>
                             {% if object.verification %}
-                                <td><img src="/media/mylog14-verify.png" class="responsive-img" style="width:50%"></td>
-                            {% else %}
-                                <td></td>
+                                <img src="/media/mylog14-verify.png" class="responsive-img" style="width:30%">
                             {% endif %}
+                            </td>
                         {% endfor %}
-                        </tr>
+                    </tr>
                     </table>
                 </div>
             </div>
