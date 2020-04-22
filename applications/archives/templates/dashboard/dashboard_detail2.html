@@ -90,12 +90,12 @@
     <ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
         <li>
             <!-- <div class="user-view"> -->
-                <div style="height: 20%;">
-
-      <div class="background">
-        <img class="responsive-img" src="/media/logo.png" style="width:100%">
-      </div>
-    </div></li>
+            <div style="height: 20%;">
+                <div class="background">
+                    <img class="responsive-img" src="/media/logo.png">
+                </div>
+            </div>
+        </li>
         <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
         <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
         <!-- <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li> -->
@@ -183,7 +183,7 @@
                         {% for object in records %}
                             <td class="center-align">
                             {% if object.verification %}
-                                <img src="/media/mylog14-verify.png" class="responsive-img" style="width:30%">
+                                <img src="/media/mylog14-verify.png" class="responsive-img" style="width:30%; opacity: 0.5">
                             {% endif %}
                             </td>
                         {% endfor %}
@@ -198,6 +198,7 @@
         
   </div>
 
+  <!--
   <div class="col s12 m2">
     <div class="card amber">
       <div class="card-content white-text">
@@ -208,6 +209,7 @@
   </div>
 
   <div class="divider"></div>
+  -->
 
   <h4>Photodiary</h4>
   <div id="photodiary" class="section scrollspy">
@@ -234,7 +236,7 @@
                     <div><i class="material-icons" style="vertical-align: middle">place</i><i style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</i></div>
                     <div>
                     {% if object.verification %}
-                        <img src="/media/mylog14-verify.png" class="responsive-img" style="width:10%">
+                        <img src="/media/mylog14-verify.png" class="responsive-img" style="width:7%; opacity: 0.5">
                     {% endif %}
                     </div>
                 </div>
