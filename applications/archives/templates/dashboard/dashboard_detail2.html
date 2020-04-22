@@ -185,24 +185,27 @@
    {% for object in records %}
     <div class="row">
         <div class="col s12 m4">
-            <div class="card blue-text" style="height:750px">
+            <div class="card blue-text">
             <span class="card-title" ><i class="demo"> {{ object.timestamp }}</i></span>
                 <div class="card-image">
                 {% if object.content.photos.0.byteString != None %}
-                    <img class="responsive-img" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}" style="height=500px">
+                    <img class="responsive-img" src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
                 {% else %}
-                    <img class="responsive-img" src="/media/logo.png" style="width:100% height=500px">
+                    <img class="responsive-img" src="/media/logo.png">
                 {% endif %}           
                 </div>
             <div class="card-content">
             <ul>
-
                 <li><a   href="#dashboard"><i class="material-icons">equalizer</i><i class="demo"> {{ object.timestamp }}</i></a></li>
-
                 <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
                 <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.photos.0.tag }}</li>   
                 <li><a href="#dashboard"><i class="material-icons">equalizer</i>{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</li>
             </ul>
+            </div>
+            <div class="card-action">
+                {% if object.verification %}
+                    <img src="/media/mylog14-verify.png" class="responsive-img" style="width:10%">
+                {% endif %}
             </div>
         </div>
     </div>
