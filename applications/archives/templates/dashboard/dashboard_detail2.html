@@ -48,40 +48,37 @@
   })
 </script>
 <script>
-    const $locationMapping = $("#location-mapping");
-    $(document).ready(function(){
-        $.ajax({url: $lineChart.data("url"), 
+const $locationMapping = $("#location-mapping");
+$(document).ready(function(){
+    $.ajax({
+        url: $lineChart.data("url"),
         success: function(data) {
+            places = [];
+            places.push(["Home", 23.6978, 120.9605]);
 
-        places = [];
-
-        places.push(["Home", 23.6978, 120.9605]);  
-
-        for (x in data.labels){
-            label = data.labels[x]
-            latitude = data.latitude[x]
-            longitude = data.longitude[x]
-            places.push([label, latitude, longitude]);
+            for (x in data.labels) {
+                label = data.labels[x]
+                latitude = data.latitude[x]
+                longitude = data.longitude[x]
+                places.push([label, latitude, longitude]);
             }
-        
-        // Making a map and tiles
-        const mymap = L.map('mapid').setView([23.6978, 120.9605], 7);
-        const attribution =
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        const tiles = L.tileLayer(tileUrl, { attribution });
-        tiles.addTo(mymap);
-        
-        var i;
-        for (var i = 0; i < places.length; i++) {
-            console.log(places[i])
-			marker = new L.marker([places[i][1],places[i][2]]).bindPopup(places[i][0]).addTo(mymap);
-		}
+            // Making a map and tiles
+            const mymap = L.map('mapid').setView([23.6978, 120.9605], 7);
+            const attribution =
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-    }
+            const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            const tiles = L.tileLayer(tileUrl, { attribution });
+            tiles.addTo(mymap);
+
+            for (var i = 0; i < places.length; i++) {
+                console.debug(`Place #${i}: ${places[i]}`);
+                marker = new L.marker([places[i][1],places[i][2]]).bindPopup(places[i][0]).addTo(mymap);
+            }
+        }
     })
-    });
+});
 </script>
 {% endblock javascript %}
 {% block content %}
