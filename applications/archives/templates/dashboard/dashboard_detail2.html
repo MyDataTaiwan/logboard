@@ -1,4 +1,5 @@
 {% extends "dashboard/base.html" %}
+{% load array_index %}
 {% block javascript %}
 <script>
   var $lineChart = $("#line-chart");
@@ -124,57 +125,22 @@ $(document).ready(function(){
                             <!-- <td >{{ object.timestamp }}</td> -->
                         {% endfor %}
                     </tr>
+                    {% for symptom in records.0.content.symptoms.list %}
+                    {% with symptom_idx=forloop.counter0 %}
                     <tr>
-                        <th>Coughing</th>
+                        <th>{{ symptom.name }}</th>
                         {% for object in records %}
                             <td class="center-align">
-                            {% if object.content.condition.coughing %}
+                            {% with object_symptom=object.content.symptoms.list|arrayindex:symptom_idx %}
+                            {% if object_symptom.present %}
                                 <i class="material-icons red-text">label</i>
                             {% endif %}
+                            {% endwith %}
                             </td>
                         {% endfor %}
                     </tr>
-                    <tr>
-                        <th>Headache</th>
-                        {% for object in records %}
-                            <td class="center-align">
-                            {% if object.content.condition.headache %}
-                                <i class="material-icons red-text">label</i>
-                            {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <th>Running Nose</th>
-                        {% for object in records %}
-                            <td class="center-align">
-                            {% if object.content.condition.runnyNose %}
-                                <i class="material-icons red-text">label</i>
-                            {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <th>Sore Throat</th>
-                        {% for object in records %}
-                            <td class="center-align">
-                            {% if object.content.condition.soreThroat %}
-                                <i class="material-icons red-text">label</i>
-                            {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                         <th>Other Symptoms</th>
-                        {% for object in records %}
-                            <!-- TODO: Add "others" key in example data. -->
-                            <td class="center-align">
-                            {% if object.content.condition.soreThroat %}
-                                <i class="material-icons red-text">label</i>
-                            {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
+                    {% endwith %}
+                    {% endfor %}
                     <tr>
                         <th>Verified</th>
                         {% for object in records %}
