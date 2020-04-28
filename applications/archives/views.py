@@ -59,7 +59,7 @@ class DataView(APIView):
     queryset = Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
 
     for entry in queryset:
-        if entry['content']['bodyTemperature'] != None:
+        if entry['content'].get('bodyTemperature', None) != None:
             labels.append(datetime.fromtimestamp(entry['timestamp']))
             record.append(entry['content']['bodyTemperature'])
             threshold.append(CRITICAL_TEMP)
