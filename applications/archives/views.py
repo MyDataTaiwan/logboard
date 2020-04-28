@@ -36,7 +36,7 @@ class DashboardHomeView(ListView):
     def get_queryset(self):
         return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
 
-# TODO 
+# TODO
 class DataView(APIView):
     # Temperature Constants for verification and line threshhold
     MAX_BODY_TEMP = 40
