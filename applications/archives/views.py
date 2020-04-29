@@ -60,23 +60,7 @@ class DataView(APIView):
 
     for entry in queryset:
         if entry['content'].get('bodyTemperature', None) != None:
-            # App (Javascript) uses 13-digit timestamp (msecs),
-            # so we convert it to 10-digit Unix time timestamp (secs) for Python.
-            digits = len(str(entry['timestamp']))
-            if digits == 10:
-                unix_time_timestamp = entry['timestamp']
-            elif digits == 13:
-                unix_time_timestamp = entry['timestamp'] / 1000
-            elif digits == 16:
-                unix_time_timestamp = entry['timestamp'] / 1000000
-            else:
-                logger.warn(
-                    'Timestamp {0} has unknown digits {1}'
-                    ', keep using it and the following codes might has some issues.'
-                    ''.format(entry['timestamp'], digits)
-                )
-                unix_time_timestamp = entry['timestamp']
-            labels.append(datetime.fromtimestamp(unix_time_timestamp))
+            labels.append(datetime.fromtimestamp(entry['timestamp']))
             record.append(entry['content']['bodyTemperature'])
             threshold.append(CRITICAL_TEMP)
             dead.append(MAX_BODY_TEMP)

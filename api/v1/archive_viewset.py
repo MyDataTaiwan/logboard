@@ -157,7 +157,7 @@ def update_records_table(target_dirpath):
                 verification = False
             print('verification: {}'.format(verification))
             r = Records(identity = identity,
-                        timestamp = content['timestamp'],
+                        timestamp = unix_time_timestamp(content['timestamp']),
                         content = content,
                         verification = verification)
             r.save()
@@ -205,3 +205,25 @@ def parse_archive():
     #sentiment_analyzer = SentimentAnalyzer(public_key)
     #sentiment_analyzer.analyze()
     #logger.info('Sentiment analysis completed')
+
+
+def unix_time_timestamp(t):
+    """Convert millisec and microsec timestamps to Unix time timestamp.
+
+    App (Javascript) uses 13-digit timestamp (msecs),
+    so we convert it to 10-digit Unix time timestamp (secs) for Python.
+    """
+    timestamp = int(t)
+    digits = len(str(timestamp))
+    if digits == 10:
+        return timestamp
+    elif digits == 13:
+        return int(timestamp / 1000)
+    elif digits == 16:
+        return int(timestamp / 1000000)
+    else:
+        logger.warn((
+            'Timestamp {0} has unknown digits {1},'
+            ' use the timestamp without any guarantee'.format(t, digits)
+        ))
+        return timestamp
