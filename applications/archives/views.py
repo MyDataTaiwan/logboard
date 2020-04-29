@@ -65,9 +65,9 @@ class DataView(APIView):
             digits = len(str(entry['timestamp']))
             if digits == 10:
                 unix_time_timestamp = entry['timestamp']
-            if digits == 13:
+            elif digits == 13:
                 unix_time_timestamp = entry['timestamp'] / 1000
-            if digits == 16:
+            elif digits == 16:
                 unix_time_timestamp = entry['timestamp'] / 1000000
             else:
                 logger.warn(
