@@ -60,7 +60,23 @@ class DataView(APIView):
 
     for entry in queryset:
         if entry['content'].get('bodyTemperature', None) != None:
-            labels.append(datetime.fromtimestamp(entry['timestamp']))
+            # App (Javascript) uses 13-digit timestamp (msecs),
+            # so we convert it to 10-digit Unix time timestamp (secs) for Python.
+            digits = len(str(entry['timestamp']))
+            if digits == 10:
+                unix_time_timestamp = entry['timestamp']
+            if digits == 13:
+                unix_time_timestamp = entry['timestamp'] / 1000
+            if digits == 16:
+                unix_time_timestamp = entry['timestamp'] / 1000000
+            else:
+                logger.warn(
+                    'Timestamp {0} has unknown digits {1}'
+                    ', keep using it and the following codes might has some issues.'
+                    ''.format(entry['timestamp'], digits)
+                )
+                unix_time_timestamp = entry['timestamp']
+            labels.append(datetime.fromtimestamp(unix_time_timestamp))
             record.append(entry['content']['bodyTemperature'])
             threshold.append(CRITICAL_TEMP)
             dead.append(MAX_BODY_TEMP)
@@ -68,7 +84,6 @@ class DataView(APIView):
             #To move these to the proper place once tested.
             latitude.append(entry['content']['locationStamp']['latitude'])
             longitude.append(entry['content']['locationStamp']['longitude'])
-
 
     def get(self, request, format=None):
 
