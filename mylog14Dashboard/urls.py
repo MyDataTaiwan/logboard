@@ -29,13 +29,12 @@ router.register(r'records', RecordViewSet, basename='Record')
 router.register(r'archives', ArchiveViewset, 'archives')
 
 urlpatterns = [
+    path('dashboard/', include('applications.archives.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/', include(router.urls)),
 ]
 if settings.ADMIN_ENABLED:
     urlpatterns.append(path('admin/', admin.site.urls))
-elif settings.DEBUG:
-    urlpatterns.append(path('dashboard/', include('applications.archives.urls')))
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
