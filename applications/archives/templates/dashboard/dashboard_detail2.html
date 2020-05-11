@@ -1,5 +1,6 @@
 {% extends "dashboard/base.html" %}
 {% load array_index %}
+{% load static %}
 {% block javascript %}
 <script>
   var $lineChart = $("#line-chart");
@@ -90,7 +91,7 @@ $(document).ready(function(){
             <!-- <div class="user-view"> -->
             <div style="height: 20%;">
                 <div class="background">
-                    <img class="responsive-img" src="/media/logo.png">
+                    <img class="responsive-img" src="{% static "media/logo.png" %}">
                 </div>
             </div>
         </li>
@@ -146,7 +147,7 @@ $(document).ready(function(){
                         {% for object in records %}
                             <td class="center-align">
                             {% if object.verification %}
-                                <img src="/media/mylog14-verify.png" class="responsive-img" style="width:30%; opacity: 0.5">
+                                <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img" style="width:30%; opacity: 0.5">
                             {% endif %}
                             </td>
                         {% endfor %}
@@ -188,7 +189,7 @@ $(document).ready(function(){
                 {% if object.content.photos.0.byteString != None %}
                     <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
                 {% else %}
-                    <img src="/media/logo.png">
+                    <img src="{% static "media/logo.png" %}">
                 {% endif %}           
                 </div>
 
@@ -199,7 +200,7 @@ $(document).ready(function(){
                     <div><i class="material-icons" style="vertical-align: middle">place</i><i style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</i></div>
                     <div>
                     {% if object.verification %}
-                        <img src="/media/mylog14-verify.png" class="responsive-img" style="width:7%; opacity: 0.5">
+                        <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img" style="width:7%; opacity: 0.5">
                     {% endif %}
                     </div>
                 </div>
