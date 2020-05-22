@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_celery_results',
+    'django_crontab',
     'corsheaders',
     'rest_framework',
     'api.v1.records',
@@ -203,3 +204,9 @@ UNIQUE_MAX_CLICS : 35
 
 # Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+# Crontab
+CRONJOBS = [
+    ('*/1 * * * *', 'applications.archives.cron.hello', ['/home/bafu/codes/mylog14-dashboard']),
+    ('*/1 * * * *', 'applications.archives.cron.cleandb', ['/home/bafu/codes/mylog14-dashboard'])
+]
