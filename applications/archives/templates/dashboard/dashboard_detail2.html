@@ -1,6 +1,7 @@
 {% extends "dashboard/base.html" %}
 {% load array_index %}
 {% load static %}
+{% load i18n %}
 {% block javascript %}
 <script>
   var $lineChart = $("#line-chart");
@@ -105,7 +106,7 @@ $(document).ready(function(){
   <div id="dashboard" class="section scrollspy">
     <div class="row">
         <h4>Dashboard</h4>
-        <div class="col s8"><h6>Body Temperature</h6>
+        <div class="col s8"><h6>{% trans "Body Temperature" %}</h6>
             <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
         </div>
         <div class="col s4">
