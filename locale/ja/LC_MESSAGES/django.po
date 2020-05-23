@@ -21,29 +21,29 @@ msgstr ""
 #: applications/archives/templates/dashboard/dashboard_detail2.html:99
 #: applications/archives/templates/dashboard/dashboard_detail2.html:108
 msgid "Dashboard"
-msgstr "儀表板"
+msgstr ""
 
 #: applications/archives/templates/dashboard/dashboard_detail2.html:100
 #: applications/archives/templates/dashboard/dashboard_detail2.html:179
 msgid "Photodiary"
-msgstr "相片集"
+msgstr ""
 
 #: applications/archives/templates/dashboard/dashboard_detail2.html:109
 msgid "Body Temperature"
-msgstr "體溫"
+msgstr "体温"
 
 #: applications/archives/templates/dashboard/dashboard_detail2.html:113
 msgid "Locations"
-msgstr "位置"
+msgstr ""
 
 #: applications/archives/templates/dashboard/dashboard_detail2.html:120
 msgid "Symptoms"
-msgstr "症狀"
+msgstr "症状"
 
 #: mylog14Dashboard/settings.py:177
 msgid "Traditional Chinese"
-msgstr "正體中文"
+msgstr ""
 
 #: mylog14Dashboard/settings.py:178
 msgid "Japanese"
-msgstr "日語"
+msgstr ""

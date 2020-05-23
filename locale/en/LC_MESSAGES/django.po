@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-23 07:03+0000\n"
+"POT-Creation-Date: 2020-05-23 07:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: applications/archives/templates/dashboard/dashboard_detail2.html:99
+#: applications/archives/templates/dashboard/dashboard_detail2.html:108
+msgid "Dashboard"
+msgstr "Dashboard"
+
 #: applications/archives/templates/dashboard/dashboard_detail2.html:100
 #: applications/archives/templates/dashboard/dashboard_detail2.html:179
 msgid "Photodiary"
 msgstr "Photodiary"
-
-#: applications/archives/templates/dashboard/dashboard_detail2.html:108
-msgid "Dashboard"
-msgstr "Dashboard"
 
 #: applications/archives/templates/dashboard/dashboard_detail2.html:109
 msgid "Body Temperature"
@@ -42,3 +43,7 @@ msgstr "Symptoms"
 #: mylog14Dashboard/settings.py:177
 msgid "Traditional Chinese"
 msgstr "Traditional Chinese"
+
+#: mylog14Dashboard/settings.py:178
+msgid "Japanese"
+msgstr "Japanese"
