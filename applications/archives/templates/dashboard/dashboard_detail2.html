@@ -96,8 +96,8 @@ $(document).ready(function(){
                 </div>
             </div>
         </li>
-        <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
-        <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
+        <li><a href="#dashboard"><i class="material-icons">equalizer</i>{% trans "Dashboard" %}</a></li>
+        <li><a href="#photodiary"><i class="material-icons">camera_roll</i>{% trans "Photodiary" %}</a></li>
         <!-- <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li> -->
     </ul>
     <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
@@ -105,19 +105,19 @@ $(document).ready(function(){
 <div style="padding-left:315px">
   <div id="dashboard" class="section scrollspy">
     <div class="row">
-        <h4>Dashboard</h4>
+        <h4>{% trans "Dashboard" %}</h4>
         <div class="col s8"><h6>{% trans "Body Temperature" %}</h6>
             <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
         </div>
         <div class="col s4">
-            <h6>Locations</h6>
+            <h6>{% trans "Locations" %}</h6>
             <div id="mapid" style="height: 500px" class="uk-background-primary" data-url="{% url 'location-mapping' %}"></div>
         </div>
         <div class="row">
             <div class="col s16 m16">
             <div class="card">
                 <div class="card-content blue-text">
-                <span class="card-title">Symptoms</span>
+                <span class="card-title">{% trans "Symptoms" %}</span>
                 <div>
                     <table id="monitoring_table" class="responsive-table">
                     <tr>
@@ -176,7 +176,7 @@ $(document).ready(function(){
   <div class="divider"></div>
   -->
 
-  <h4>Photodiary</h4>
+  <h4>{% trans "Photodiary" %}</h4>
   <div id="photodiary" class="section scrollspy">
     <div class="row">
     {% for object in records %}
