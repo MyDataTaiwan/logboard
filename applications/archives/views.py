@@ -69,7 +69,6 @@ class DataView(APIView):
             latitude.append(entry['content']['locationStamp']['latitude'])
             longitude.append(entry['content']['locationStamp']['longitude'])
 
-
     def get(self, request, format=None):
 
         data = {

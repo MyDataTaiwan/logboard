@@ -25,7 +25,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '#75417%bz(fw$p_2qu=u0#=y)2=rqi=pd)*24q9u%7a+=u=0l3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+# Disable admin page in production
+ADMIN_ENABLED = False
 
 ALLOWED_HOSTS = [
     'mylog14.numbersprotocol.io',
@@ -38,7 +41,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -50,11 +52,14 @@ INSTALLED_APPS = [
     'api.v1.records',
     'applications.archives'
     ]
+if ADMIN_ENABLED:
+    INSTALLED_APPS.append('django.contrib.admin')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -73,6 +78,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -163,6 +169,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
+from django.utils.translation import gettext_lazy as _
+
+## Supported languages
+LANGUAGES = (
+    ('en', ('English')),
+    ('zh-hant', _('Traditional Chinese')),
+    ('ja', _('Japanese')),
+)
+
+## Where to store the locale files
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -177,7 +197,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'applications/archives/static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'applications/archives/static')
+STATICFILES_DIRS = [
+    ('media', os.path.join(BASE_DIR, 'applications/archives/static/media')),
+]
 STATIC_URL = '/static/'
 
 # SSL
@@ -186,9 +209,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
