@@ -82,7 +82,7 @@
                         // The type of chart we want to create
                         type: "line",
                         data: {
-                            labels: DB.labels,
+                            labels: DB.labels.map(label => label.split('T')[1]),
                             datasets: [
                                 {
                                     label: "Records",
@@ -133,7 +133,7 @@
                     var chart = new Chart(dayctx, {
                         type: "line",
                         data: {
-                            labels: DB.labels,
+                            labels: DB.labels.map(label => label.split('T')[0]),
                             datasets: [
                                 {
                                     label: "Records",
