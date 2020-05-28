@@ -60,8 +60,15 @@ class DataView(APIView):
 
 
     def get(self, request, format=None):
+        self.labels = []
+        self.record = []
+        self.threshold = []
+        self.dead = []
+        self.latitude = []
+        self.longitude = []
 
         for entry in self.queryset.all():
+            print(entry['timestamp'])
             if entry['content'].get('bodyTemperature', None) != None:
                 self.labels.append(datetime.fromtimestamp(entry['timestamp']))
                 self.record.append(entry['content']['bodyTemperature'])
@@ -80,6 +87,7 @@ class DataView(APIView):
             "latitude": self.latitude,
             "longitude": self.longitude
         }
+        print(data)
         return Response(data)
 
 
