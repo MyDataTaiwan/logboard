@@ -11,7 +11,7 @@
         success: function (data) {
             const app = document.querySelector('#app')
             const arr = [0, 1, 2, 3, 4, 5, 6, 7];
-        
+
             {
                 const button = document.createElement("button");
                 button.onclick = () => val(-1);
@@ -39,7 +39,7 @@
                 row.dead.push(data.dead[i]);
                 return result;
             }, []);
-            console.log( dataDay)
+            console.log(dataDay)
 
             var dataWeek = dataDay.map(row => {
                 var i = row.labels.map((v, i) => i).sort((a, b) =>
@@ -50,7 +50,7 @@
                 var labels = row.labels[i];
                 var threshold = row.threshold[i];
                 var dead = row.dead[i];
-                
+
                 return { record, labels, threshold, dead };
             }).reduce(
                 (result, value, i) => {
@@ -287,67 +287,68 @@
     <div style="padding-left:315px">
         <div id="dashboard" class="section scrollspy">
             <div class="row">
-                <h4>{% trans "Dashboard" %}</h4>
-                <div id="app"></div>
-                <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
-            </div>
-            <div class="col s4">
-                <h6>{% trans "Locations" %}</h6>
-                <div id="mapid" style="height: 500px" class="uk-background-primary"
-                    data-url="{% url 'location-mapping' %}"></div>
-            </div>
-            <div class="row">
-                <div class="col s16 m16">
-                    <div class="card">
-                        <div class="card-content blue-text">
-                            <span class="card-title">{% trans "Symptoms" %}</span>
-                            <div>
-                                <table id="monitoring_table" class="responsive-table">
-                                    <tr>
-                                        <th></th>
-                                        {% for object in records %}
-                                        <td class="center-align demo">{{ object.timestamp }}</td>
-                                        <!-- <td >{{ object.timestamp }}</td> -->
+                <div class="col s8">
+                    <h4>{% trans "Dashboard" %}</h4>
+                    <div id="app"></div>
+                    <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
+                </div>
+                <div class="col s4">
+                    <h6>{% trans "Locations" %}</h6>
+                    <div id="mapid" style="height: 500px" class="uk-background-primary"
+                        data-url="{% url 'location-mapping' %}"></div>
+                </div>
+                <div class="row">
+                    <div class="col s16 m16">
+                        <div class="card">
+                            <div class="card-content blue-text">
+                                <span class="card-title">{% trans "Symptoms" %}</span>
+                                <div>
+                                    <table id="monitoring_table" class="responsive-table">
+                                        <tr>
+                                            <th></th>
+                                            {% for object in records %}
+                                            <td class="center-align demo">{{ object.timestamp }}</td>
+                                            <!-- <td >{{ object.timestamp }}</td> -->
+                                            {% endfor %}
+                                        </tr>
+                                        {% for symptom in records.0.content.symptoms.list %}
+                                        {% with symptom_idx=forloop.counter0 %}
+                                        <tr>
+                                            <th>{{ symptom.name }}</th>
+                                            {% for object in records %}
+                                            <td class="center-align">
+                                                {% with object_symptom=object.content.symptoms.list|arrayindex:symptom_idx %}
+                                                {% if object_symptom.present %}
+                                                <i class="material-icons red-text">label</i>
+                                                {% endif %}
+                                                {% endwith %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endwith %}
                                         {% endfor %}
-                                    </tr>
-                                    {% for symptom in records.0.content.symptoms.list %}
-                                    {% with symptom_idx=forloop.counter0 %}
-                                    <tr>
-                                        <th>{{ symptom.name }}</th>
-                                        {% for object in records %}
-                                        <td class="center-align">
-                                            {% with object_symptom=object.content.symptoms.list|arrayindex:symptom_idx %}
-                                            {% if object_symptom.present %}
-                                            <i class="material-icons red-text">label</i>
-                                            {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                        {% endfor %}
-                                    </tr>
-                                    {% endwith %}
-                                    {% endfor %}
-                                    <tr>
-                                        <th>Verified</th>
-                                        {% for object in records %}
-                                        <td class="center-align">
-                                            {% if object.verification %}
-                                            <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img"
-                                                style="width:30%; opacity: 0.5">
-                                            {% endif %}
-                                        </td>
-                                        {% endfor %}
-                                    </tr>
-                                </table>
+                                        <tr>
+                                            <th>Verified</th>
+                                            {% for object in records %}
+                                            <td class="center-align">
+                                                {% if object.verification %}
+                                                <img src="{% static "media/mylog14-verify.png" %}"
+                                                    class="responsive-img" style="width:30%; opacity: 0.5">
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
 
-        </div>
-
-        <!--
+            <!--
   <div class="col s12 m2">
     <div class="card amber">
       <div class="card-content white-text">
@@ -360,53 +361,53 @@
   <div class="divider"></div>
   -->
 
-  <h4>{% trans "Photodiary" %}</h4>
-  <div id="photodiary" class="section scrollspy">
-    <div class="row">
-    {% for object in records %}
-    {% if object.content.photos.0.byteString != None %}
-        <div class="col s12 m4 l3">
-            <div class="card large blue-text">
-                <span class="card-title" >
-                    <div class="demo"> {{ object.timestamp }}</div>
-                </span>
+            <h4>{% trans "Photodiary" %}</h4>
+            <div id="photodiary" class="section scrollspy">
+                <div class="row">
+                    {% for object in records %}
+                    {% if object.content.photos.0.byteString != None %}
+                    <div class="col s12 m4 l3">
+                        <div class="card large blue-text">
+                            <span class="card-title">
+                                <div class="demo"> {{ object.timestamp }}</div>
+                            </span>
 
-                <div class="card-image">
-                    <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
-                </div>
-
-                        <div class="card-content">
-                            <div><i class="material-icons" style="vertical-align: middle">access_time</i><i class="demo"
-                                    style="vertical-align: middle; margin-left: 5px">{{ object.timestamp }}</i></div>
-                            <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
-                            <div><i class="material-icons" style="vertical-align: middle">label_outline</i><i
-                                    style="vertical-align: middle; margin-left: 5px">{{ object.content.photos.0.tag }}</i>
+                            <div class="card-image">
+                                <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
                             </div>
-                            <div><i class="material-icons" style="vertical-align: middle">place</i><i
-                                    style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }},
-                                    {{ object.content.locationStamp.longitude }}</i></div>
-                            <div>
-                                {% if object.verification %}
-                                <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img"
-                                    style="width:7%; opacity: 0.5">
-                                {% endif %}
-                            </div>
-                        </div>
 
-                        <!--
+                            <div class="card-content">
+                                <div><i class="material-icons" style="vertical-align: middle">access_time</i><i
+                                        class="demo"
+                                        style="vertical-align: middle; margin-left: 5px">{{ object.timestamp }}</i>
+                                </div>
+                                <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
+                                <div><i class="material-icons" style="vertical-align: middle">label_outline</i><i
+                                        style="vertical-align: middle; margin-left: 5px">{{ object.content.photos.0.tag }}</i>
+                                </div>
+                                <div><i class="material-icons" style="vertical-align: middle">place</i><i
+                                        style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }},
+                                        {{ object.content.locationStamp.longitude }}</i></div>
+                                <div>
+                                    {% if object.verification %}
+                                    <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img"
+                                        style="width:7%; opacity: 0.5">
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!--
                 <div class="card-action">
                 </div>
                 -->
-                    </div> <!-- blue-text -->
+                        </div> <!-- blue-text -->
+                    </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-    {% endif %}
-    {% endfor %}
-    </div>
-  </div>
-  <div class="divider"></div>
-  <!-- <div id="calendar" class="section scrollspy">
+            <div class="divider"></div>
+            <!-- <div id="calendar" class="section scrollspy">
     <div class="row">
     <h4>Calendar</h4>
     <div class="col s12 m12">
@@ -437,7 +438,7 @@
             </div>   
         </div>
     </div> -->
-    </div>
+        </div>
 </body>
 
 <script type="text/javascript">
