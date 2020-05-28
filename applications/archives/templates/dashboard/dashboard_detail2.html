@@ -178,6 +178,7 @@ $(document).ready(function(){
   <div id="photodiary" class="section scrollspy">
     <div class="row">
     {% for object in records %}
+    {% if object.content.photos.0.byteString != None %}
         <div class="col s12 m4 l3">
             <div class="card large blue-text">
                 <span class="card-title" >
@@ -185,11 +186,7 @@ $(document).ready(function(){
                 </span>
 
                 <div class="card-image">
-                {% if object.content.photos.0.byteString != None %}
                     <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
-                {% else %}
-                    <img src="/media/logo.png">
-                {% endif %}           
                 </div>
 
                 <div class="card-content">
@@ -210,6 +207,7 @@ $(document).ready(function(){
                 -->
             </div>  <!-- blue-text -->
         </div>
+    {% endif %}
     {% endfor %}
     </div>
   </div>
