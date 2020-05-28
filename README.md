@@ -11,7 +11,12 @@ $ python3 -m pip install Django
 $ python3 -m pip install -r requirements.txt
 ```
 
-Testing by development server. You need to comment-out the SSL session in `g14Dashboard/settings.py`:
+Testing by development server. You need to:
+
+1. comment-out the SSL session in `mylog14Dashboard/settings.py`
+
+2. Change DEBUG to True in `mylog14Dashboard/settings.py`
+
 
 ```
 $ python3 manage.py makemigrations
@@ -28,3 +33,11 @@ alias update_mylog14='python3 manage.py makemigrations; python3 manage.py migrat
 
 
 WARNING: DASHBOARD Code will be dropped and integrated to applications/archives
+
+# Deploy
+
+WIP
+
+```
+$ python3 manage.py collectstatic
+```

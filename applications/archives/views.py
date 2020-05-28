@@ -43,6 +43,7 @@ class DataView(APIView):
     CRITICAL_TEMP  = 38
 
     model = Records
+    queryset = Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
 
     labels = []
     record = []
@@ -56,20 +57,27 @@ class DataView(APIView):
         custodian_hash = '8fa4a4f6-4827-4c3d-8e1e-cf548e48b988'
         return custodian_hash
 
-    queryset = Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
 
-    for entry in queryset:
-        if entry['content'].get('bodyTemperature', None) != None:
-            labels.append(datetime.fromtimestamp(entry['timestamp']))
-            record.append(entry['content']['bodyTemperature'])
-            threshold.append(CRITICAL_TEMP)
-            dead.append(MAX_BODY_TEMP)
-
-            #To move these to the proper place once tested.
-            latitude.append(entry['content']['locationStamp']['latitude'])
-            longitude.append(entry['content']['locationStamp']['longitude'])
 
     def get(self, request, format=None):
+        self.labels = []
+        self.record = []
+        self.threshold = []
+        self.dead = []
+        self.latitude = []
+        self.longitude = []
+
+        for entry in self.queryset.all():
+            print(entry['timestamp'])
+            if entry['content'].get('bodyTemperature', None) != None:
+                self.labels.append(datetime.fromtimestamp(entry['timestamp']))
+                self.record.append(entry['content']['bodyTemperature'])
+                self.threshold.append(self.CRITICAL_TEMP)
+                self.dead.append(self.MAX_BODY_TEMP)
+
+                #To move these to the proper place once tested.
+                self.latitude.append(entry['content']['locationStamp']['latitude'])
+                self.longitude.append(entry['content']['locationStamp']['longitude'])
 
         data = {
             "labels": self.labels,
@@ -79,6 +87,7 @@ class DataView(APIView):
             "latitude": self.latitude,
             "longitude": self.longitude
         }
+        print(data)
         return Response(data)
 
 
