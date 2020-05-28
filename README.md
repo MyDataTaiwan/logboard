@@ -15,7 +15,7 @@ Testing by development server. You need to:
 
 1. comment-out the SSL session in `mylog14Dashboard/settings.py`
 
-2. Change DEBUG to False in `mylog14Dashboard/settings.py`
+2. Change DEBUG to True in `mylog14Dashboard/settings.py`
 
 
 ```
