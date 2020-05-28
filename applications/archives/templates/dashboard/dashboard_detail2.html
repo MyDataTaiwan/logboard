@@ -360,23 +360,20 @@
   <div class="divider"></div>
   -->
 
-        <h4>{% trans "Photodiary" %}</h4>
-        <div id="photodiary" class="section scrollspy">
-            <div class="row">
-                {% for object in records %}
-                <div class="col s12 m4 l3">
-                    <div class="card large blue-text">
-                        <span class="card-title">
-                            <div class="demo"> {{ object.timestamp }}</div>
-                        </span>
+  <h4>{% trans "Photodiary" %}</h4>
+  <div id="photodiary" class="section scrollspy">
+    <div class="row">
+    {% for object in records %}
+    {% if object.content.photos.0.byteString != None %}
+        <div class="col s12 m4 l3">
+            <div class="card large blue-text">
+                <span class="card-title" >
+                    <div class="demo"> {{ object.timestamp }}</div>
+                </span>
 
-                        <div class="card-image">
-                            {% if object.content.photos.0.byteString != None %}
-                            <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
-                            {% else %}
-                            <img src="{% static "media/logo.png" %}">
-                            {% endif %}
-                        </div>
+                <div class="card-image">
+                    <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
+                </div>
 
                         <div class="card-content">
                             <div><i class="material-icons" style="vertical-align: middle">access_time</i><i class="demo"
@@ -402,11 +399,14 @@
                 -->
                     </div> <!-- blue-text -->
                 </div>
-                {% endfor %}
             </div>
         </div>
-        <div class="divider"></div>
-        <!-- <div id="calendar" class="section scrollspy">
+    {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+  <div class="divider"></div>
+  <!-- <div id="calendar" class="section scrollspy">
     <div class="row">
     <h4>Calendar</h4>
     <div class="col s12 m12">
