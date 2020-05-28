@@ -201,21 +201,12 @@
 
                                 // drawOnChartArea:true,
                                 drawBorder: false,
-                                color: [
-                                    "pink",
-                                    "red",
-                                    "orange",
-                                    "yellow",
-                                    "green",
-                                    "blue",
-                                    "indigo",
-                                    "purple"
-                                ]
+                                color: "light gray",
                             },
                             ticks: {
                                 min: 35,
-                                max: 40,
-                                stepSize: 2.5
+                                max: 41,
+                                stepSize: 1
                             }
                             // ticks: {
                             //     min: 0,
@@ -291,6 +282,7 @@
             <div class="row">
                 <div class="col s8">
                     <h4>{% trans "Dashboard" %}</h4>
+                    <h6>{% trans "Body Temperature" %}</h6>
                     <div id="app"></div>
                     <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
                 </div>
