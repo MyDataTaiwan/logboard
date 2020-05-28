@@ -16,6 +16,7 @@ Testing by development server. You need to comment-out the SSL session in `g14Da
 ```
 $ python3 manage.py makemigrations
 $ python3 manage.py migrate
+$ python3 manage.py collectstatic
 $ python3 manage.py runserver
 $ sensible-browser http://localhost:8000
 ```
