@@ -36,14 +36,24 @@ class DashboardHomeView(ListView):
     def get_queryset(self):
         return Records.objects.order_by('timestamp').filter(identity=self.kwargs['userHash'])
 
+    def get(self, request, *args, **kwargs):
+        print(self.kwargs)
+        data = {
+            'records': self.get_queryset(),
+            'userHash': self.kwargs['userHash'],
+        }
+        return render(request=request, template_name=self.template_name, context=data)
+
 # TODO
 class DataView(APIView):
     # Temperature Constants for verification and line threshhold
-    MAX_BODY_TEMP = 40
+    MAX_BODY_TEMP = 41
     CRITICAL_TEMP  = 38
 
     model = Records
-    queryset = Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
+
+    def get_queryset(self):
+        return Records.objects.values('identity', 'timestamp','content').order_by('timestamp')
 
     labels = []
     record = []
@@ -59,7 +69,7 @@ class DataView(APIView):
 
 
 
-    def get(self, request, format=None):
+    def get(self, request, userHash=None):
         self.labels = []
         self.record = []
         self.threshold = []
@@ -67,7 +77,8 @@ class DataView(APIView):
         self.latitude = []
         self.longitude = []
 
-        for entry in self.queryset.all():
+
+        for entry in self.get_queryset().filter(identity=userHash):
             print(entry['timestamp'])
             if entry['content'].get('bodyTemperature', None) != None:
                 self.labels.append(datetime.fromtimestamp(entry['timestamp']))

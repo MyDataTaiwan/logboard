@@ -5,6 +5,7 @@
 {% block javascript %}
 <script>
     var $lineChart = $("#line-chart");
+    console.log('CCC', $lineChart.data("url"));
     $.ajax({
         method: "GET",
         url: $lineChart.data("url"),
@@ -284,7 +285,7 @@
                     <h4>{% trans "Dashboard" %}</h4>
                     <h6>{% trans "Body Temperature" %}</h6>
                     <div id="app"></div>
-                    <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
+                    <canvas id="line-chart" data-url="{% url 'line-chart' userHash %}"></canvas>
                 </div>
                 <div class="col s4">
                     <h6>{% trans "Locations" %}</h6>
