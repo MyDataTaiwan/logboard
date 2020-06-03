@@ -5,7 +5,6 @@
 {% block javascript %}
 <script>
     var $lineChart = $("#line-chart");
-    console.log('CCC', $lineChart.data("url"));
     $.ajax({
         method: "GET",
         url: $lineChart.data("url"),
