@@ -3,6 +3,221 @@
 {% load static %}
 {% load i18n %}
 {% block javascript %}
+<style>
+    @import url(https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
+​​/*-------------------------
+    Simple reset
+--------------------------*/
+
+
+*{
+    margin:0;
+    padding:0;
+}
+
+
+/*-------------------------
+    General Styles
+--------------------------*/
+.app{
+    display: flex;
+    flex-direction: column;
+}
+
+html{
+    background:url('../img/background.jpg') #fefefe;
+    position:relative;
+}
+
+/* body{
+    padding: 200px 0 0;
+    font:14px/1.3 'Segoe UI',Arial, sans-serif;
+    min-height:500px;
+} */
+
+a, a:visited {
+    text-decoration:none;
+    outline:none;
+    color:#54a6de;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+section, footer, nav{
+    display: block;
+}
+
+
+/*----------------------------
+    The Navigation Menu
+-----------------------------*/
+
+
+#colorNav > ul{
+    width: 450px; /* Increase when adding more menu items */
+    /* margin:0 auto; */
+    z-index: 1000;
+}
+
+#colorNav > ul > li{ /* will style only the top level li */
+    list-style: none;
+    box-shadow: 0 0 10px rgba(100, 100, 100, 0.2) inset,1px 1px 1px #CCC;
+    display: inline-block;
+    line-height: 1;
+    margin: 1px;
+    border-radius: 3px;
+    position:relative;
+}
+
+#colorNav > ul > li > a{
+    color:inherit;
+    text-decoration:none !important;
+    font-size:24px;
+    padding: 5px 25px;
+}
+
+#colorNav li ul{
+    position:absolute;
+    list-style:none;
+    text-align:center;
+    width:180px;
+    left:50%;
+    margin-left:-90px;
+    top:40px;
+    font:bold 12px 'Open Sans Condensed', sans-serif;
+    
+    /* This is important for the show/hide CSS animation */
+    max-height:0px;
+    overflow:hidden;
+    
+    -webkit-transition:max-height 0.4s linear;
+    -moz-transition:max-height 0.4s linear;
+    transition:max-height 0.4s linear;
+}
+
+#colorNav li ul li{
+    background-color:#313131;
+}
+
+#colorNav li ul li a{
+    padding:12px;
+    color:#fff !important;
+    text-decoration:none !important;
+    display:block;
+}
+
+#colorNav li ul li:nth-child(odd){ /* zebra stripes */
+    background-color:#363636;
+}
+
+#colorNav li ul li:hover{
+    background-color:#444;
+}
+
+#colorNav li ul li:first-child{
+    border-radius:3px 3px 0 0;
+    margin-top:5px;
+    position:relative;
+}
+
+#colorNav li ul li:first-child:before{ /* the pointer tip */
+    content:'';
+    position:absolute;
+    width:1px;
+    height:1px;
+    border:5px solid transparent;
+    border-bottom-color:#313131;
+    left:50%;
+    top:-10px;
+    margin-left:-5px;
+}
+
+#colorNav li ul li:last-child{
+    border-bottom-left-radius:3px;
+    border-bottom-right-radius:3px;
+}
+
+/* This will trigger the CSS */
+/* transition animation on hover */
+
+#colorNav li:hover ul{
+    max-height:200px; /* Increase when adding more dropdown items */
+}
+
+
+/*----------------------------
+    Color Themes
+-----------------------------*/
+
+
+#colorNav li.green{
+    /* This is the color of the menu item */
+    background-color:#00c08b;
+    
+    /* This is the color of the icon */
+    color:#127a5d;
+}
+
+#colorNav li.red{       background-color:#ea5080 ;color:#aa2a52;}
+#colorNav li.blue{      background-color:#52c9f4 !important;color:#fff;}
+#colorNav li.yellow{    background-color:#f9af32 !important;color:#fff;}
+#colorNav li.purple{    background-color:#df6dc2 ;color:#9f3c85;}
+
+
+/*----------------------------
+    The Footer
+-----------------------------*/
+
+
+footer{
+    background-color: #111111;
+    bottom: 0;
+    box-shadow: 0 -1px 2px #111111;
+    height: 45px;
+    left: 0;
+    position: fixed;
+    width: 100%;
+    z-index: 100000;
+}
+
+footer h2{
+    color: #EEEEEE;
+    font-size: 14px;
+    font-weight: normal;
+    left: 50%;
+    margin-left: -400px;
+    padding: 13px 0 0;
+    position: absolute;
+    width: 540px;
+}
+
+footer h2 i{
+    font-style:normal;
+    color:#888;
+}
+
+footer a.tzine,a.tzine:visited{
+    color: #999999;
+    font-size: 12px;
+    left: 50%;
+    margin: 16px 0 0 110px;
+    position: absolute;
+    text-decoration: none;
+    top: 0;
+}
+
+footer a i{
+    color:#ccc;
+    font-style: normal;
+}
+
+footer a i b{
+    color:#c92020;
+    font-weight: normal;
+}
+</style>
 <script>
     var $lineChart = $("#line-chart");
     $.ajax({
@@ -10,14 +225,43 @@
         url: $lineChart.data("url"),
         success: function (data) {
             const app = document.querySelector('#app')
+            const app2 = document.querySelector('#app2')
+
             const arr = [0, 1, 2, 3, 4, 5, 6, 7];
+            const arr2 = [0, 1, 2, 3, 4, 5, 6, 7];
+
+            window.val = function val() 
+            {
+                app.innerHTML = arr.map(val => `<li><button onClick="val(-1) id="button_id">${val}</button></li>`).join('')
+                // const button = document.createElement(<li><a href="#">"button"</a></li>);
+                const li = document.createElement("li");
+                li.onclick = () => val(-1);
+                li.innerText = "Show All";
+                app.appendChild(li);
+                // app.appendChild( <li><a href="#"></a></li>);
+                // <button>
+                // <li><a href="#">Dropdown item 2</a></li>
+                // app.appendChild( <li><a href="#">{button}</a></li>);                    
+            }
+            
+            {
+                const li = document.createElement("li");
+                li.onclick = () => val(-1);
+                li.style.color = "#fff";
+                li.style.lineHeight = "2";
+                li.innerText = "Show All";
+                app.appendChild(li);
+            }
 
             {
-                const button = document.createElement("button");
-                button.onclick = () => val(-1);
-                button.innerText = "Show All";
-                app.appendChild(button);
+                const li = document.createElement("li");
+                li.onclick = () => val(-1);
+                li.style.color = "#fff";
+                li.style.lineHeight = "2";
+                li.innerText = "Show All";
+                app2.appendChild(li);
             }
+
 
             var dataDay = data.labels.reduce((result, value, i) => {
                 var date = value.replace(/(\d+-\d+-\d+).+/g, "$1");
@@ -67,11 +311,13 @@
             });
 
             dataWeek.labels.map((date, i) => {
-                const button = document.createElement("button");
-                button.onclick = () => val(i);
-                button.innerText = date.replace(/(\d+)-(\d+)-(\d+).+/, "$2/$3");
-                return button;
-            }).forEach(button => app.appendChild(button));
+                const li = document.createElement("li");
+                li.onclick = () => val(i);
+                li.style.color = "#fff";
+                li.style.lineHeight = "2";
+                li.innerText = date.replace(/(\d+)-(\d+)-(\d+).+/, "$2/$3");
+                return li;
+            }).forEach(li => app.appendChild(li));
 
             var dayctx = document.getElementById("line-chart").getContext("2d");
             function val(d = 0) {
@@ -283,19 +529,44 @@
                 <div class="col s8">
                     <h4>{% trans "Dashboard" %}</h4>
                     <h6>{% trans "Body Temperature" %}</h6>
-                    <div id="app"></div>
+                    <!-- <div id="app"></div> -->
+                    <div id="colorNav">
+                        <ul>
+                                 <li class="blue">
+                                <a href="#" class="fa fa-bars">
+                                    Select Day
+                                </a>
+                                <ul id="app">
+                                </ul>
+                            </li>
+                                 <!-- <li class="yellow">
+                                <a href="#" class="fa fa-random"></a>
+                                <ul id="app2">
+                                </ul>
+                            </li> -->
+                        </ul>
+                    </div>
                     <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
                 </div>
                 <div class="col s4">
                     <h6>{% trans "Locations" %}</h6>
                     <div id="mapid" style="height: 500px" class="uk-background-primary"
                         data-url="{% url 'location-mapping' %}"></div>
-                </div>
+                </div>          
                 <div class="row">
                     <div class="col s16 m16">
                         <div class="card">
                             <div class="card-content blue-text">
                                 <span class="card-title">{% trans "Symptoms" %}</span>
+                                <div id="colorNav">
+                                    <ul>
+                                             <li class="yellow">
+                                            <a href="#" class="fa fa-bars"> Select Day</a>
+                                            <ul id="app2">
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                                 <div>
                                     <table id="monitoring_table" class="responsive-table">
                                         <tr>
