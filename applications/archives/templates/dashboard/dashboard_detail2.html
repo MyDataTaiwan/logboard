@@ -1,168 +1,348 @@
 {% extends "dashboard/base.html" %}
 {% load array_index %}
 {% load static %}
+{% load i18n %}
 {% block javascript %}
 <script>
-  var $lineChart = $("#line-chart");
-  $.ajax({
-    method: "GET",
-    url: $lineChart.data("url"),
-    success: function(data){
-      var ctx = document.getElementById("line-chart").getContext('2d');
-      var myChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-              labels: data.labels,
-              datasets: [{
-                  label: 'Records',
-                  data: data.record,
-                  borderColor: 'orange',
-                  borderWidth: 2,
-                  fill: false,
-                  lineTension: 0,
-              },
-              {
-                label: 'CRITICAL',
-                data: data.threshold,
-                borderColor: 'rgba(255, 99, 132, 0.5)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: false,
-                lineTension: 0,
-          },
-          {
-                label: 'MAX',
-                data: data.dead,
-                borderColor: 'rgba(255, 99, 132, 0.5)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: '-1',
-                lineTension: 0,
-          }]
-          },
-          options: {
-              reponsive: true,
-              
-          }
-      });
-    },
-    error: function(error_data){
-      console.log(error_data)
-    }
-  })
-</script>
-<script>
-const $locationMapping = $("#location-mapping");
-$(document).ready(function(){
+    var $lineChart = $("#line-chart");
     $.ajax({
+        method: "GET",
         url: $lineChart.data("url"),
-        success: function(data) {
-            places = [];
-            places.push(["Home", 23.6978, 120.9605]);
+        success: function (data) {
+            const app = document.querySelector('#app')
+            const arr = [0, 1, 2, 3, 4, 5, 6, 7];
 
-            for (x in data.labels) {
-                label = data.labels[x]
-                latitude = data.latitude[x]
-                longitude = data.longitude[x]
-                places.push([label, latitude, longitude]);
+            {
+                const button = document.createElement("button");
+                button.onclick = () => val(-1);
+                button.innerText = "Show All";
+                app.appendChild(button);
             }
 
-            // Making a map and tiles
-            const mymap = L.map('mapid').setView([23.6978, 120.9605], 7);
-            const attribution =
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+            var dataDay = data.labels.reduce((result, value, i) => {
+                var date = value.replace(/(\d+-\d+-\d+).+/g, "$1");
+                // var [date] = value.replace(/(\d+-\d+-\d+).+/, "$1")
+                var row = result.find(row => row.labels[0].replace(/(\d+-\d+-\d+).+/g, "$1") == date);
+                // var row = result.find(row => row.labels[0].split(" ")[0] == date);
+                if (!row) {
+                    row = {
+                        record: [],
+                        labels: [],
+                        threshold: [],
+                        dead: [],
+                    };
+                    result.push(row);
+                }
+                row.record.push(data.record[i]);
+                row.labels.push(data.labels[i]);
+                row.threshold.push(data.threshold[i]);
+                row.dead.push(data.dead[i]);
+                return result;
+            }, []);
+            console.log(dataDay)
 
-            const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-            const tiles = L.tileLayer(tileUrl, { attribution });
-            tiles.addTo(mymap);
+            var dataWeek = dataDay.map(row => {
+                var i = row.labels.map((v, i) => i).sort((a, b) =>
+                    row.record[b] - row.record[a]
+                )[0];
 
-            for (var i = 0; i < places.length; i++) {
-                console.debug(`Place #${i}: ${places[i]}`);
-                marker = new L.marker([places[i][1],places[i][2]]).bindPopup(places[i][0]).addTo(mymap);
+                var record = row.record[i];
+                var labels = row.labels[i];
+                var threshold = row.threshold[i];
+                var dead = row.dead[i];
+
+                return { record, labels, threshold, dead };
+            }).reduce(
+                (result, value, i) => {
+                    result.record[i] = value.record;
+                    result.labels[i] = value.labels;
+                    result.threshold[i] = value.threshold;
+                    result.dead[i] = value.dead;
+                    return result;
+                }, {
+                record: [],
+                labels: [],
+                threshold: [],
+                dead: [],
+            });
+
+            dataWeek.labels.map((date, i) => {
+                const button = document.createElement("button");
+                button.onclick = () => val(i);
+                button.innerText = date.replace(/(\d+)-(\d+)-(\d+).+/, "$2/$3");
+                return button;
+            }).forEach(button => app.appendChild(button));
+
+            var dayctx = document.getElementById("line-chart").getContext("2d");
+            function val(d = 0) {
+                console.log(d);
+                if (d !== -1) {
+                    DB = dataDay[d];
+                    var chart = new Chart(dayctx, {
+                        // The type of chart we want to create
+                        type: "line",
+                        data: {
+                            labels: DB.labels.map(label => label.split('T')[1]),
+                            datasets: [
+                                {
+                                    label: "Records",
+                                    data: DB.record,
+                                    borderColor: 'orange',
+                                    borderWidth: 2,
+                                    fill: false,
+                                    lineTension: 0
+                                },
+                                {
+                                    label: "CRITICAL",
+                                    data: DB.threshold,
+                                    borderColor: 'rgba(255, 99, 132, 0.5)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: false,
+                                    lineTension: 0,
+                                    pointColor: "rgba(220,220,220,1)",
+                                    pointStrokeColor: "#fff",
+                                    pointHighlightFill: "#fff",
+                                    pointHitRadius: 0,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 0,
+                                    pointHighlightStroke: "rgba(220,220,220,1)"
+                                },
+                                {
+                                    label: "MAX",
+                                    data: DB.dead,
+                                    borderColor: 'rgba(255, 99, 132, 0.5)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: "-1",
+                                    lineTension: 0,
+                                    pointColor: "rgba(220,220,220,1)",
+                                    pointStrokeColor: "#fff",
+                                    pointHighlightFill: "#fff",
+                                    pointHitRadius: 0,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 0,
+                                    pointHighlightStroke: "rgba(220,220,220,1)"
+                                }
+                            ]
+                        },
+                        options: chartOptions
+                    });
+                } else {
+                    DB = dataWeek;
+                    var chart = new Chart(dayctx, {
+                        type: "line",
+                        data: {
+                            labels: DB.labels.map(label => label.split('T')[0]),
+                            datasets: [
+                                {
+                                    label: "Records",
+                                    data: DB.record,
+                                    borderColor: 'orange',
+                                    borderWidth: 2,
+                                    fill: false,
+                                    lineTension: 0
+                                },
+                                {
+                                    label: "CRITICAL",
+                                    data: DB.threshold,
+                                    borderColor: 'rgba(255, 99, 132, 0.5)',
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: false,
+                                    lineTension: 0,
+                                    pointColor: "rgba(220,220,220,1)",
+                                    pointStrokeColor: "#fff",
+                                    pointHighlightFill: "#fff",
+                                    pointHitRadius: 0,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 0,
+                                    pointHighlightStroke: "rgba(220,220,220,1)"
+                                },
+                                {
+                                    label: "MAX",
+                                    data: DB.dead,
+                                    borderColor: 'rgba(255, 99, 132, 0.5)',
+
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    fill: "-1",
+                                    lineTension: 0,
+                                    pointColor: "rgba(220,220,220,1)",
+                                    pointStrokeColor: "#fff",
+                                    pointHighlightFill: "#fff",
+                                    pointHitRadius: 0,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 0,
+                                    pointHighlightStroke: "rgba(220,220,220,1)"
+                                }
+                            ]
+                        },
+
+                        // Configuration options go here
+                        options: chartOptions
+                    });
+                }
             }
+
+            chartOptions = {
+                reponsive: true,
+                tooltips: {
+                    backgroundColor: "rgba(255, 99, 232, 0.5)",
+                    multiKeyBackground: "rgba(255, 99, 232, 0.5)"
+                },
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 30,
+                    }
+                },
+                scales: {
+                    yAxes: [
+                        {
+                            gridLines: {
+                                zeroLineWidth: 1000,
+
+                                // drawOnChartArea:true,
+                                drawBorder: false,
+                                color: "light gray",
+                            },
+                            ticks: {
+                                min: 35,
+                                max: 41,
+                                stepSize: 1
+                            }
+                            // ticks: {
+                            //     min: 0,
+                            //     max: 100,
+                            //     stepSize: 10
+                            // }
+                        }
+                    ]
+                }
+            };
+            val(-1);
+        },
+        error: function (error_data) {
+            console.log(error_data)
         }
     })
-});
+</script>
+<script>
+    const $locationMapping = $("#location-mapping");
+    $(document).ready(function () {
+        $.ajax({
+            url: $lineChart.data("url"),
+            success: function (data) {
+                places = [];
+                places.push(["Home", 23.6978, 120.9605]);
+
+                for (x in data.labels) {
+                    label = data.labels[x]
+                    latitude = data.latitude[x]
+                    longitude = data.longitude[x]
+                    places.push([label, latitude, longitude]);
+                }
+
+                // Making a map and tiles
+                const mymap = L.map('mapid').setView([23.6978, 120.9605], 7);
+                const attribution =
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+                const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                const tiles = L.tileLayer(tileUrl, { attribution });
+                tiles.addTo(mymap);
+
+                for (var i = 0; i < places.length; i++) {
+                    console.debug(`Place #${i}: ${places[i]}`);
+                    marker = new L.marker([places[i][1], places[i][2]]).bindPopup(places[i][0]).addTo(mymap);
+                }
+            }
+        })
+    });
 </script>
 {% endblock javascript %}
 {% block content %}
+
 <body>
-<div class="white-text">
-    <ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
-        <li>
-            <!-- <div class="user-view"> -->
-            <div style="height: 20%;">
-                <div class="background">
-                    <img class="responsive-img" src="{% static "media/logo.png" %}">
+    <div class="white-text">
+        <ul id="slide-out" class="sidenav sidenav-fixed light-blue accent-3">
+            <li>
+                <!-- <div class="user-view"> -->
+                <div style="height: 20%;">
+                    <div class="background">
+                        <img class="responsive-img" src="{% static "media/logo.png" %}">
+                    </div>
                 </div>
-            </div>
-        </li>
-        <li><a href="#dashboard"><i class="material-icons">equalizer</i>Dashboard</a></li>
-        <li><a href="#photodiary"><i class="material-icons">camera_roll</i>Photodiary</a></li>
-        <!-- <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li> -->
-    </ul>
-    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-</div>
-<div style="padding-left:315px">
-  <div id="dashboard" class="section scrollspy">
-    <div class="row">
-        <h4>Dashboard</h4>
-        <div class="col s8"><h6>Body Temperature</h6>
-            <canvas id="line-chart" data-url="{% url 'line-chart' %}"></canvas>
-        </div>
-        <div class="col s4">
-            <h6>Locations</h6>
-            <div id="mapid" style="height: 500px" class="uk-background-primary" data-url="{% url 'location-mapping' %}"></div>
-        </div>
-        <div class="row">
-            <div class="col s16 m16">
-            <div class="card">
-                <div class="card-content blue-text">
-                <span class="card-title">Symptoms</span>
-                <div>
-                    <table id="monitoring_table" class="responsive-table">
-                    <tr>
-                        <th></th>
-                        {% for object in records %}
-                        <td class="center-align demo">{{ object.timestamp }}</td>
-                            <!-- <td >{{ object.timestamp }}</td> -->
-                        {% endfor %}
-                    </tr>
-                    {% for symptom in records.0.content.symptoms.list %}
-                    {% with symptom_idx=forloop.counter0 %}
-                    <tr>
-                        <th>{{ symptom.name }}</th>
-                        {% for object in records %}
-                            <td class="center-align">
-                            {% with object_symptom=object.content.symptoms.list|arrayindex:symptom_idx %}
-                            {% if object_symptom.present %}
-                                <i class="material-icons red-text">label</i>
-                            {% endif %}
-                            {% endwith %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    {% endwith %}
-                    {% endfor %}
-                    <tr>
-                        <th>Verified</th>
-                        {% for object in records %}
-                            <td class="center-align">
-                            {% if object.verification %}
-                                <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img" style="width:30%; opacity: 0.5">
-                            {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    </table>
+            </li>
+            <li><a href="#dashboard"><i class="material-icons">equalizer</i>{% trans "Dashboard" %}</a></li>
+            <li><a href="#photodiary"><i class="material-icons">camera_roll</i>{% trans "Photodiary" %}</a></li>
+            <!-- <li><a href="#calendar"><i class="material-icons">date_range</i>Calendar</a></li> -->
+        </ul>
+        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    </div>
+    <div style="padding-left:315px">
+        <div id="dashboard" class="section scrollspy">
+            <div class="row">
+                <div class="col s8">
+                    <h4>{% trans "Dashboard" %}</h4>
+                    <h6>{% trans "Body Temperature" %}</h6>
+                    <div id="app"></div>
+                    <canvas id="line-chart" data-url="{% url 'line-chart' userHash %}"></canvas>
                 </div>
-            </div>
-            </div>
+                <div class="col s4">
+                    <h6>{% trans "Locations" %}</h6>
+                    <div id="mapid" style="height: 500px" class="uk-background-primary"
+                        data-url="{% url 'location-mapping' %}"></div>
+                </div>
+                <div class="row">
+                    <div class="col s16 m16">
+                        <div class="card">
+                            <div class="card-content blue-text">
+                                <span class="card-title">{% trans "Symptoms" %}</span>
+                                <div>
+                                    <table id="monitoring_table" class="responsive-table">
+                                        <tr>
+                                            <th></th>
+                                            {% for object in records %}
+                                            <td class="center-align demo">{{ object.timestamp }}</td>
+                                            <!-- <td >{{ object.timestamp }}</td> -->
+                                            {% endfor %}
+                                        </tr>
+                                        {% for symptom in records.0.content.symptoms.list %}
+                                        {% with symptom_idx=forloop.counter0 %}
+                                        <tr>
+                                            <th>{{ symptom.name }}</th>
+                                            {% for object in records %}
+                                            <td class="center-align">
+                                                {% with object_symptom=object.content.symptoms.list|arrayindex:symptom_idx %}
+                                                {% if object_symptom.present %}
+                                                <i class="material-icons red-text">label</i>
+                                                {% endif %}
+                                                {% endwith %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endwith %}
+                                        {% endfor %}
+                                        <tr>
+                                            <th>Verified</th>
+                                            {% for object in records %}
+                                            <td class="center-align">
+                                                {% if object.verification %}
+                                                <img src="{% static "media/mylog14-verify.png" %}"
+                                                    class="responsive-img" style="width:30%; opacity: 0.5">
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
-        </div>
-        
-  </div>
-
-  <!--
+            <!--
   <div class="col s12 m2">
     <div class="card amber">
       <div class="card-content white-text">
@@ -175,47 +355,53 @@ $(document).ready(function(){
   <div class="divider"></div>
   -->
 
-  <h4>Photodiary</h4>
-  <div id="photodiary" class="section scrollspy">
-    <div class="row">
-    {% for object in records %}
-        <div class="col s12 m4 l3">
-            <div class="card large blue-text">
-                <span class="card-title" >
-                    <div class="demo"> {{ object.timestamp }}</div>
-                </span>
+            <h4>{% trans "Photodiary" %}</h4>
+            <div id="photodiary" class="section scrollspy">
+                <div class="row">
+                    {% for object in records %}
+                    {% if object.content.photos.0.byteString != None %}
+                    <div class="col s12 m4 l3">
+                        <div class="card large blue-text">
+                            <span class="card-title">
+                                <div class="demo"> {{ object.timestamp }}</div>
+                            </span>
 
-                <div class="card-image">
-                {% if object.content.photos.0.byteString != None %}
-                    <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
-                {% else %}
-                    <img src="{% static "media/logo.png" %}">
-                {% endif %}           
-                </div>
+                            <div class="card-image">
+                                <img src="data:image/jpeg;base64,{{ object.content.photos.0.byteString }}">
+                            </div>
 
-                <div class="card-content">
-                    <div><i class="material-icons" style="vertical-align: middle">access_time</i><i class="demo" style="vertical-align: middle; margin-left: 5px">{{ object.timestamp }}</i></div>
-                    <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
-                    <div><i class="material-icons" style="vertical-align: middle">label_outline</i><i style="vertical-align: middle; margin-left: 5px">{{ object.content.photos.0.tag }}</i></div>
-                    <div><i class="material-icons" style="vertical-align: middle">place</i><i style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }}, {{ object.content.locationStamp.longitude }}</i></div>
-                    <div>
-                    {% if object.verification %}
-                        <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img" style="width:7%; opacity: 0.5">
-                    {% endif %}
-                    </div>
-                </div>
+                            <div class="card-content">
+                                <div><i class="material-icons" style="vertical-align: middle">access_time</i><i
+                                        class="demo"
+                                        style="vertical-align: middle; margin-left: 5px">{{ object.timestamp }}</i>
+                                </div>
+                                <!-- <li><a  href="#dashboard"><i class="material-icons">equalizer</i>{{ object.timestamp }}</a></li> -->
+                                <div><i class="material-icons" style="vertical-align: middle">label_outline</i><i
+                                        style="vertical-align: middle; margin-left: 5px">{{ object.content.photos.0.tag }}</i>
+                                </div>
+                                <div><i class="material-icons" style="vertical-align: middle">place</i><i
+                                        style="vertical-align: middle; margin-left: 5px">{{ object.content.locationStamp.latitude }},
+                                        {{ object.content.locationStamp.longitude }}</i></div>
+                                <div>
+                                    {% if object.verification %}
+                                    <img src="{% static "media/mylog14-verify.png" %}" class="responsive-img"
+                                        style="width:7%; opacity: 0.5">
+                                    {% endif %}
+                                </div>
+                            </div>
 
-                <!--
+                            <!--
                 <div class="card-action">
                 </div>
                 -->
-            </div>  <!-- blue-text -->
-        </div>
-    {% endfor %}
-    </div>
-  </div>
-  <div class="divider"></div>
-  <!-- <div id="calendar" class="section scrollspy">
+                        </div> <!-- blue-text -->
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="divider"></div>
+            <!-- <div id="calendar" class="section scrollspy">
     <div class="row">
     <h4>Calendar</h4>
     <div class="col s12 m12">
@@ -246,14 +432,14 @@ $(document).ready(function(){
             </div>   
         </div>
     </div> -->
-</div>
+        </div>
 </body>
 
 <script type="text/javascript">
     // WORKAROUND: All the timestamp DOMs is with class "demo".
     //             Change all timestamps to datetime format.
     let timestamps = document.getElementsByClassName("demo");
-    for (i = 0; i<timestamps.length; i++){
+    for (i = 0; i < timestamps.length; i++) {
         const timestamp = timestamps[i].innerHTML;
         console.debug("timestamp #" + i, timestamps[i].innerHTML)
         const dateobj = new Date(timestamp * 1000);  // msecs
