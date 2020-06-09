@@ -220,6 +220,5 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 # Crontab
 CRONJOBS = [
-    ('*/1 * * * *', 'applications.archives.cron.hello', ['/home/ubuntu/mylog14-dashboard']),
     ('*/1 * * * *', 'applications.archives.cron.cleandb', ['/home/ubuntu/mylog14-dashboard'])
 ]
