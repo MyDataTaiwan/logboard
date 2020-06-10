@@ -301,8 +301,10 @@
                                         <tr>
                                             <th></th>
                                             {% for object in records %}
+                                            {% if object.content.photos.0.byteString == None %}
                                             <td class="center-align demo">{{ object.timestamp }}</td>
                                             <!-- <td >{{ object.timestamp }}</td> -->
+                                            {% endif %}
                                             {% endfor %}
                                         </tr>
                                         {% for symptom in records.0.content.symptoms.list %}
@@ -324,12 +326,14 @@
                                         <tr>
                                             <th>Verified</th>
                                             {% for object in records %}
+                                            {% if object.content.photos.0.byteString == None %}
                                             <td class="center-align">
                                                 {% if object.verification %}
                                                 <img src="{% static "media/mylog14-verify.png" %}"
                                                     class="responsive-img" style="width:30%; opacity: 0.5">
                                                 {% endif %}
                                             </td>
+                                            {% endif %}
                                             {% endfor %}
                                         </tr>
                                     </table>
