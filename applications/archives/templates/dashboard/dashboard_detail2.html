@@ -5,6 +5,21 @@
 {% block javascript %}
 <script>
     var $lineChart = $("#line-chart");
+    function getLocalTime(utcTime) {
+        function createDateAsUTC(date) {
+            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+        }
+        let dateObj = createDateAsUTC(new Date(utcTime));
+        const year = dateObj.getFullYear();
+        const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);  // value: 0-11
+        const date = ("0" + dateObj.getDate()).slice(-2);
+        const hours = ("0" + dateObj.getHours()).slice(-2);
+        const minutes = ("0" + dateObj.getMinutes()).slice(-2);
+        const seconds = ("0" + dateObj.getSeconds()).slice(-2);
+        const datetime = `${year}-${month}-${date}T${hours}:${minutes}:${seconds}`;
+        console.log('datetime', datetime)
+        return datetime;
+    }
     $.ajax({
         method: "GET",
         url: $lineChart.data("url"),
@@ -18,7 +33,7 @@
                 button.innerText = "Show All";
                 app.appendChild(button);
             }
-
+            data.labels = data.labels.map(label => getLocalTime(label));
             var dataDay = data.labels.reduce((result, value, i) => {
                 var date = value.replace(/(\d+-\d+-\d+).+/g, "$1");
                 // var [date] = value.replace(/(\d+-\d+-\d+).+/, "$1")
@@ -226,17 +241,31 @@
 </script>
 <script>
     const $locationMapping = $("#location-mapping");
+    function getLocalTime(utcTime) {
+        function createDateAsUTC(date) {
+            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+        }
+        let dateObj = createDateAsUTC(new Date(utcTime));
+        const year = dateObj.getFullYear();
+        const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);  // value: 0-11
+        const date = ("0" + dateObj.getDate()).slice(-2);
+        const hours = ("0" + dateObj.getHours()).slice(-2);
+        const minutes = ("0" + dateObj.getMinutes()).slice(-2);
+        const seconds = ("0" + dateObj.getSeconds()).slice(-2);
+        const datetime = `${year}-${month}-${date}T${hours}:${minutes}:${seconds}`;
+        console.log('datetime', datetime)
+        return datetime;
+    }
     $(document).ready(function () {
         $.ajax({
             url: $lineChart.data("url"),
             success: function (data) {
                 places = [];
                 places.push(["Home", 23.6978, 120.9605]);
-
                 for (x in data.labels) {
-                    label = data.labels[x]
-                    latitude = data.latitude[x]
-                    longitude = data.longitude[x]
+                    label = getLocalTime(data.labels[x]);
+                    latitude = data.latitude[x];
+                    longitude = data.longitude[x];
                     places.push([label, latitude, longitude]);
                 }
 
