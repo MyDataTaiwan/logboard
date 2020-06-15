@@ -7,3 +7,9 @@ class CouponProviderSerializer(serializers.ModelSerializer):
     class Meta:
         model = CouponProvider
         fields = ['id', 'name', 'discount', 'quantity', 'expiration_time']
+
+
+class CouponProviderDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CouponProvider
+        fields = ['id', 'name', 'discount', 'quantity', 'expiration_time', 'coupon']
