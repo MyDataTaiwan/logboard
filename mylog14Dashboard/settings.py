@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'api.v1.records',
     'applications.archives',
     'applications.shops',
+    'applications.coupons',
+    'applications.coupon_providers',
     ]
 if ADMIN_ENABLED:
     INSTALLED_APPS.append('django.contrib.admin')
