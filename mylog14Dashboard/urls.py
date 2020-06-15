@@ -23,11 +23,13 @@ from rest_framework import routers, viewsets
 
 from api.v1.records.views import RecordViewSet
 from api.v1.archive_viewset import ArchiveViewset
+from applications.shops.views import ShopViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'records', RecordViewSet, basename='Record')
 router.register(r'archives', ArchiveViewset, 'archives')
+router.register(r'shops', ShopViewSet, 'shops')
 
 urlpatterns = [
     path('dashboard/', include('applications.archives.urls')),

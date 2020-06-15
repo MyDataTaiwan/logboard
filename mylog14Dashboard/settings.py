@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '#75417%bz(fw$p_2qu=u0#=y)2=rqi=pd)*24q9u%7a+=u=0l3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Disable admin page in production
 ADMIN_ENABLED = False
@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api.v1.records',
-    'applications.archives'
+    'applications.archives',
+    'applications.shops',
     ]
 if ADMIN_ENABLED:
     INSTALLED_APPS.append('django.contrib.admin')
