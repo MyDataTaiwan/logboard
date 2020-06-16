@@ -29,6 +29,9 @@ from api.v1.archive_viewset import ArchiveViewset
 from applications.shops.views import ShopViewSet
 from applications.coupons.views import CouponViewSet
 from applications.coupon_providers.views import CouponProviderViewSet
+from applications.user_wallet.views import UserWalletViewSet
+from applications.shop_wallet.views import ShopWalletViewSet
+from applications.transactions.views import TransactionViewSet
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -51,6 +54,9 @@ router.register(r'archives', ArchiveViewset, 'archives')
 router.register(r'shops', ShopViewSet, 'shops')
 router.register(r'coupons', CouponViewSet, 'coupons')
 router.register(r'coupon_providers', CouponProviderViewSet, 'coupon_providers')
+router.register(r'user_wallet', UserWalletViewSet, 'user_wallet')
+router.register(r'shop_wallet', ShopWalletViewSet, 'shop_wallet')
+router.register(r'transactions', TransactionViewSet, 'transactions')
 
 urlpatterns = [
     path('dashboard/', include('applications.archives.urls')),

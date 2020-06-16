@@ -56,6 +56,9 @@ INSTALLED_APPS = [
     'applications.shops',
     'applications.coupons',
     'applications.coupon_providers',
+    'applications.user_wallet',
+    'applications.shop_wallet',
+    'applications.transactions',
     ]
 if ADMIN_ENABLED:
     INSTALLED_APPS.append('django.contrib.admin')
