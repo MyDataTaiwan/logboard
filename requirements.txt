@@ -16,9 +16,11 @@ django-cors-headers==3.2.1
 django-crontab==0.7.1
 django-filter==2.2.0
 djangorestframework==3.11.0
+drf-yasg==1.17.1
 gunicorn==20.0.4
 idna==2.9
 importlib-metadata==1.6.0
+inflection==0.5.0
 isort==4.3.21
 itypes==1.1.0
 Jinja2==2.11.1
@@ -30,6 +32,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 niota==0.1.0
 numpy==1.18.2
+packaging==20.4
 pandas==1.0.3
 phx-class-registry==3.0.5
 phx-filters==2.0.2
@@ -40,12 +43,15 @@ pylint-django==2.0.14
 pylint-plugin-utils==0.6
 pyOpenSSL==19.1.0
 PyOTA==2.1.0
+pyparsing==2.4.7
 pysha3==1.0.2
 python-dateutil==2.8.1
 pytz==2019.3
 redis==3.4.1
 regex==2020.4.4
 requests==2.23.0
+ruamel.yaml==0.16.10
+ruamel.yaml.clib==0.2.0
 six==1.14.0
 sqlparse==0.3.1
 svgwrite==1.4

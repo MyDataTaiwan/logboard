@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'corsheaders',
     'rest_framework',
+    'drf_yasg',
     'api.v1.records',
     'applications.archives',
     'applications.shops',
