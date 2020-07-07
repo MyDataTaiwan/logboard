@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from api.v1.records.models import Record
+from applications.archives.models import Records
 
 class RecordSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Record
+        model = Records
         fields = '__all__'
