@@ -14,6 +14,7 @@ class RecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
         fields = [
+            "id",
             "content",
             "content_hash",
             "transaction_hash",
@@ -21,7 +22,7 @@ class RecordSerializer(serializers.ModelSerializer):
             "transaction_verified",
             "owner",
         ]
-        read_only_fields = ["content_verified", "transaction_verified", "owner"]
+        read_only_fields = ["id", "content_verified", "transaction_verified", "owner"]
 
     def create(self, validated_data):
         hs = hashlib.sha256(validated_data["content"].encode("utf-8")).hexdigest()
