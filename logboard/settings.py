@@ -10,9 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+import environ
 import logging.config
 import os
 from django.utils.log import DEFAULT_LOGGING
+
+
+env = environ.Env()
+env.read_env('.env')
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,15 +28,23 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "#75417%bz(fw$p_2qu=u0#=y)2=rqi=pd)*24q9u%7a+=u=0l3"
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 # Disable admin page in production
-ADMIN_ENABLED = True
+ADMIN_ENABLED = env('DEBUG')
 
-ALLOWED_HOSTS = ["mylog14.numbersprotocol.io", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
+
+if env('HOST_NAMES') != '':
+    host_names = env('HOST_NAMES').strip(' ').split(',')
+    ALLOWED_HOSTS = ALLOWED_HOSTS + host_names
+
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -44,12 +58,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_celery_results",
     "django_crontab",
+    'storages',
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
     "djoser",
     "apps.users",
     "apps.records",
+    "apps.mylog",
 ]
 
 if ADMIN_ENABLED:
@@ -102,16 +118,59 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "development.sqlite3"),
+database_backends = {
+    'sqlite': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(env('DATABASE_ROOT'), 'db.sqlite3'),
+        "ATOMIC_REQUESTS": True,
     },
-    "productive": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "productive.sqlite3"),
-    },
+    'postgresql': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env('POSTGRESQL_DB_NAME'),
+        'USER': env('POSTGRESQL_USERNAME'),
+        'PASSWORD': env('POSTGRESQL_PASSWORD'),
+        'HOST': env('POSTGRESQL_HOSTNAME'),
+        'PORT': env('POSTGRESQL_PORT'),
+        "ATOMIC_REQUESTS": True,
+    }
 }
+
+default_database = database_backends.get(
+    env('DEFAULT_DATABASE_BACKEND'),
+    None
+)
+
+if not default_database:
+    raise Exception('.env variable DEFAULT_DATABASE_BACKEND is invalid')
+
+DATABASES = {
+    'default': default_database,
+}
+
+
+# AWS S3 Settings
+
+default_storage_backend = env('DEFAULT_STORAGE_BACKEND')
+if default_storage_backend == 'local':
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+elif default_storage_backend == 's3':
+    AWS_DEFAULT_ACL = None
+    AWS_S3_HOST = 's3.amazonaws.com'
+    S3_USE_SIGV4 = True
+    AWS_QUERYSTRING_AUTH = True
+    AWS_QUERYSTRING_EXPIRE = env('S3_QUERYSTRING_EXPIRE')
+    AWS_ACCESS_KEY_ID = env('S3_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env('S3_STORAGE_BUCKET_NAME')
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_S3_ENCRYPTION = True if env('S3_ENCRYPTION') == 'True' else False
+
+
+
+
 
 # Disable Django's logging setup
 LOGGING_CONFIG = None
@@ -192,8 +251,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_ROOT = "/var/www/html/static"
-STATIC_URL = "/static/"
+STATIC_URL = '/static/'
+STATIC_ROOT = env('STATIC_ROOT')
+
+# Upload files
+MEDIA_URL = '/files/'
+MEDIA_ROOT = env('MEDIA_ROOT')
 
 # SSL
 
@@ -209,8 +272,11 @@ UNIQUE_URL_OBJECT: "Measurement"
 UNIQUE_EXP_DATE: 72
 UNIQUE_MAX_CLICS: 35
 
-# Celery
-CELERY_BROKER_URL = "redis://localhost:6379/0"
+# Celery settings
+
+CELERY_BROKER_URL = env('BROKER_URL')
+CELERY_RESULT_BACKEND = 'django-db'
+
 
 # Crontab
 CRONJOBS = [

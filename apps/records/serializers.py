@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 
@@ -23,5 +24,7 @@ class RecordSerializer(serializers.ModelSerializer):
         read_only_fields = ["content_verified", "transaction_verified", "owner"]
 
     def create(self, validated_data):
+        hs = hashlib.sha256(validated_data["content"].encode("utf-8")).hexdigest()
+        print(hs)
         validated_data["owner"] = self.context["request"].user
         return super(RecordSerializer, self).create(validated_data)

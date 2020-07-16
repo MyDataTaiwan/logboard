@@ -1,33 +1,30 @@
 import logging
 
-from django.db import transaction
 from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
-from apps.records.models import Record
-from apps.records.serializers import RecordSerializer
-from apps.records.tasks import parse_record
+from apps.mylog.models import MyLog
+from apps.mylog.serializers import MyLogSerializer
 
 
 logger = logging.getLogger(__name__)
 
 
-class RecordViewSet(viewsets.ModelViewSet):
+class MyLogViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    serializer_class = RecordSerializer
+    serializer_class = MyLogSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return Record.objects.filter(owner=user)
+        return MyLog.objects.filter(owner=user)
 
     def create(self, request):
-        serializer = RecordSerializer(data=request.data, context={"request": request})
+        serializer = MyLogSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
-            transaction.on_commit(lambda: parse_record.delay(serializer.data['id']))
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
