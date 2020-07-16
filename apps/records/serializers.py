@@ -18,11 +18,13 @@ class RecordSerializer(serializers.ModelSerializer):
             "content",
             "content_hash",
             "transaction_hash",
+            "content_parsed",
             "content_verified",
             "transaction_verified",
             "owner",
+            "mylog",
         ]
-        read_only_fields = ["id", "content_verified", "transaction_verified", "owner"]
+        read_only_fields = ["id", "content_parsed", "content_verified", "transaction_verified", "owner", "mylog"]
 
     def create(self, validated_data):
         hs = hashlib.sha256(validated_data["content"].encode("utf-8")).hexdigest()

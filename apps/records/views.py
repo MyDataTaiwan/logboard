@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 
 from django.db import transaction
@@ -21,13 +22,17 @@ class RecordViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Record.objects.filter(owner=user)
+        return Record.objects.filter(owner=user).order_by('-id')
 
     def create(self, request):
+        print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         serializer = RecordSerializer(data=request.data, context={"request": request})
+        print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
         if serializer.is_valid():
             serializer.save()
+            print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
             transaction.on_commit(lambda: parse_record.delay(serializer.data['id']))
+            print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

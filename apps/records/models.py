@@ -6,6 +6,7 @@ class Record(models.Model):
     content = models.TextField()
     content_hash = models.CharField(max_length=255)
     transaction_hash = models.CharField(max_length=255)
+    content_parsed = models.BooleanField(default=False)
     content_verified = models.BooleanField(default=False)
     transaction_verified = models.BooleanField(default=False)
     owner = models.ForeignKey(

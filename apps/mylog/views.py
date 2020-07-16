@@ -19,7 +19,7 @@ class MyLogViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return MyLog.objects.filter(owner=user)
+        return MyLog.objects.filter(owner=user).order_by('-id')
 
     def create(self, request):
         serializer = MyLogSerializer(data=request.data, context={"request": request})

@@ -23,6 +23,7 @@ def parse_record(pk):
     timestamp = datetime.fromtimestamp(app_timestamp // 1000)
     proof = parsed_content.get("proof", None)
     owner = instance.owner
+    record = instance
 
     fields = parsed_content.get("fields", None)
     photoField = None
@@ -30,7 +31,7 @@ def parse_record(pk):
         for idx, field in enumerate(fields):
             if field.get('type', None) == 'photo' and field.get('value', None):
                 photoField = fields.pop(idx)
-    mylog = MyLog(template_name=template_name, timestamp=timestamp, proof=proof, owner=owner, fields=fields)
+    mylog = MyLog(template_name=template_name, timestamp=timestamp, proof=proof, owner=owner, fields=fields, record=record)
     if photoField:
         photoByteString = photoField.get('value', '')
         data = ContentFile(base64.b64decode(photoByteString))
