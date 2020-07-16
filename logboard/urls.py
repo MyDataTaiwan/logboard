@@ -1,4 +1,4 @@
-"""mylog14Dashboard URL Configuration
+"""logboard URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -20,22 +20,21 @@ from django.conf.urls.static import static
 from django.urls import path, include
 from django.views.generic import TemplateView
 from rest_framework import routers, viewsets
+from rest_framework.authtoken import views
 
-from api.v1.records.views import RecordViewSet
-from api.v1.archive_viewset import ArchiveViewset
+from apps.records.views import RecordViewSet
+from apps.users.views import CustomUserViewSet
 
-# Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'records', RecordViewSet, basename='Record')
-router.register(r'archives', ArchiveViewset, 'archives')
+router.register(r"records", RecordViewSet, "records")
+router.register(r"users", CustomUserViewSet, "users")
 
 urlpatterns = [
-    path('dashboard/', include('applications.archives.urls')),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/', include(router.urls)),
+    path("api/v1/auth/", include("djoser.urls.authtoken")),
+    path("api/v1/", include(router.urls)),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
 
 if settings.ADMIN_ENABLED:
-    urlpatterns.append(path('admin/', admin.site.urls))
+    urlpatterns.append(path("admin/", admin.site.urls))
