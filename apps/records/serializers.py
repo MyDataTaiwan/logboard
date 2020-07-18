@@ -13,21 +13,27 @@ logger = logging.getLogger(__name__)
 class RecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
-        fields = [
+        fields = '__all__'
+        read_only_fields = [
             "id",
-            "content",
-            "content_hash",
-            "transaction_hash",
+            "transaction_hash_validated",
+            "content_hash_verified",
             "content_parsed",
-            "content_verified",
-            "transaction_verified",
+            "template_name",
+            "timestamp",
+            "proof",
+            "fields",
+            "photo",
             "owner",
-            "mylog",
         ]
-        read_only_fields = ["id", "content_parsed", "content_verified", "transaction_verified", "owner", "mylog"]
+
+
+class RecordCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Record
+        fields = ['id', 'raw_content', 'transaction_hash', 'owner']
+        read_only_fields = ['id', 'owner']
 
     def create(self, validated_data):
-        hs = hashlib.sha256(validated_data["content"].encode("utf-8")).hexdigest()
-        print(hs)
         validated_data["owner"] = self.context["request"].user
-        return super(RecordSerializer, self).create(validated_data)
+        return super(RecordCreateSerializer, self).create(validated_data)

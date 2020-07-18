@@ -24,12 +24,10 @@ from rest_framework.authtoken import views
 
 from apps.records.views import RecordViewSet
 from apps.users.views import CustomUserViewSet
-from apps.mylog.views import MyLogViewSet
 
 router = routers.DefaultRouter()
 router.register(r"records", RecordViewSet, "records")
 router.register(r"users", CustomUserViewSet, "users")
-router.register(r"mylog", MyLogViewSet, "mylog")
 
 urlpatterns = [
     path("api/v1/auth/", include("djoser.urls.authtoken")),

@@ -65,7 +65,6 @@ INSTALLED_APPS = [
     "djoser",
     "apps.users",
     "apps.records",
-    "apps.mylog",
 ]
 
 if ADMIN_ENABLED:

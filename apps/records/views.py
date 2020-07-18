@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.records.models import Record
-from apps.records.serializers import RecordSerializer
+from apps.records.serializers import RecordSerializer, RecordCreateSerializer
 from apps.records.tasks import parse_record
 
 
@@ -25,14 +25,10 @@ class RecordViewSet(viewsets.ModelViewSet):
         return Record.objects.filter(owner=user).order_by('-id')
 
     def create(self, request):
-        print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
-        serializer = RecordSerializer(data=request.data, context={"request": request})
-        print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+        serializer = RecordCreateSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
-            print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
             transaction.on_commit(lambda: parse_record.delay(serializer.data['id']))
-            print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
