@@ -5,6 +5,7 @@ import json
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.core.cache import cache
 from django.utils.timezone import make_aware
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -16,11 +17,18 @@ from apps.records.models import Record
 logger = get_task_logger(__name__)
 
 
-def get_iota_content_hash(transaction_hash):
+def _get_iota_content_hash(transaction_hash):
     client = niota.NumbersIOTA(logger)
     transaction = client.get_transaction(transaction_hash)
     message = client.get_message(transaction)["message"]
     return message.get("hash", None)
+
+
+def _invalidate_record_cache(pk):
+    list_cache_key = 'record_list'
+    retrieve_cache_key = 'record_retrieve_{}'.format(pk)
+    cache.delete(list_cache_key)
+    cache.delete(retrieve_cache_key)
 
 
 @shared_task
@@ -32,7 +40,7 @@ def parse_record(pk):
     # Validate transaction_hash and get content hash on ledger
     iota_content_hash = None
     try:
-        iota_content_hash = get_iota_content_hash(instance.transaction_hash)
+        iota_content_hash = _get_iota_content_hash(instance.transaction_hash)
         instance.transaction_hash_validated = SUCCESS
     except Exception as error:
         logger.error(error)
@@ -70,4 +78,5 @@ def parse_record(pk):
             data = ContentFile(base64.b64decode(photoByteString))
             file_name = "'photo.jpg"
             instance.photo.save(file_name, data, save=True)
+    _invalidate_record_cache(pk)
     instance.save()

@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 
+from django.core.cache import cache
 from django.db import transaction
 from django.http import HttpResponse
 from rest_framework import status, viewsets
@@ -23,6 +24,26 @@ class RecordViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Record.objects.filter(owner=user).order_by('-id')
+    
+    def list(self, request):
+        cache_key = 'record_list'
+        data = cache.get(cache_key)
+        if data:
+            return Response(data, status.HTTP_200_OK)
+        records = self.get_queryset()
+        serializer = RecordSerializer(records, many=True)
+        cache.set(cache_key, serializer.data)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
+    def retrieve(self, request, pk=None):
+        cache_key = 'record_retrieve_{}'.format(pk)
+        data = cache.get(cache_key)
+        if data:
+            return Response(data, status.HTTP_200_OK)
+        records = self.get_queryset()
+        serializer = RecordSerializer(records, many=True)
+        cache.set(cache_key, serializer.data)
+        return Response(serializer.data, status.HTTP_200_OK)
 
     def create(self, request):
         serializer = RecordCreateSerializer(data=request.data, context={'request': request})
