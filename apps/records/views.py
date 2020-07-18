@@ -25,7 +25,7 @@ class RecordViewSet(viewsets.ModelViewSet):
         return Record.objects.filter(owner=user).order_by('-id')
 
     def create(self, request):
-        serializer = RecordCreateSerializer(data=request.data, context={"request": request})
+        serializer = RecordCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             transaction.on_commit(lambda: parse_record.delay(serializer.data['id']))

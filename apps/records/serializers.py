@@ -15,16 +15,16 @@ class RecordSerializer(serializers.ModelSerializer):
         model = Record
         fields = '__all__'
         read_only_fields = [
-            "id",
-            "transaction_hash_validated",
-            "content_hash_verified",
-            "content_parsed",
-            "template_name",
-            "timestamp",
-            "proof",
-            "fields",
-            "photo",
-            "owner",
+            'id',
+            'transaction_hash_validated',
+            'content_hash_verified',
+            'content_parsed',
+            'template_name',
+            'timestamp',
+            'proof',
+            'fields',
+            'photo',
+            'owner',
         ]
 
 
@@ -35,5 +35,5 @@ class RecordCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'owner']
 
     def create(self, validated_data):
-        validated_data["owner"] = self.context["request"].user
+        validated_data['owner'] = self.context['request'].user
         return super(RecordCreateSerializer, self).create(validated_data)
