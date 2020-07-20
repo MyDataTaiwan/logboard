@@ -36,10 +36,7 @@ DEBUG = env('DEBUG')
 # Disable admin page in production
 ADMIN_ENABLED = env('DEBUG')
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = ['*']
 
 if env('HOST_NAMES') != '':
     host_names = env('HOST_NAMES').strip(' ').split(',')
