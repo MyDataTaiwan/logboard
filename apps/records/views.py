@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import HttpResponse
 from rest_framework import status, viewsets
@@ -29,7 +30,7 @@ class RecordViewSet(viewsets.ModelViewSet):
     def list(self, request):
         id = request.query_params.get('uid', None)
         no_valid_id_error = {
-            'error': 'No valid ID.',
+            'error': 'Query param uid is required.',
         }
         if not id:
             return Response(no_valid_id_error, status=status.HTTP_400_BAD_REQUEST)
@@ -37,9 +38,11 @@ class RecordViewSet(viewsets.ModelViewSet):
         data = cache.get(cache_key)
         if data:
             return Response(data, status.HTTP_200_OK)
-        user = CustomUser.objects.get(pk=id)
-        if not user:
-            return Response(no_valid_id_error, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = CustomUser.objects.get(pk=id)
+        except ObjectDoesNotExist:
+            error = {'error': 'User ID not found.'}
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
         records = Record.objects.filter(owner__id=id).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
         cache.set(cache_key, serializer.data)

@@ -14,6 +14,7 @@ import environ
 import logging.config
 import os
 from django.utils.log import DEFAULT_LOGGING
+from celery.schedules import crontab
 
 
 env = environ.Env()
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_celery_results",
+    "django_celery_beat",
     "django_crontab",
     'storages',
     "corsheaders",
@@ -280,12 +282,9 @@ UNIQUE_MAX_CLICS: 35
 CELERY_BROKER_URL = env('BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 
-
-# Crontab
-CRONJOBS = [
-    (
-        "*/1 * * * *",
-        "applications.archives.cron.cleandb",
-        ["/home/ubuntu/mylog14-dashboard"],
-    )
-]
+CELERY_BEAT_SCHEDULE = {
+    "clean_expired_data": {
+        "task": "apps.users.tasks.delete_old_users",
+        "schedule": crontab(minute="*/1"),
+    },
+}
