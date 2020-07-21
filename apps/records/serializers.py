@@ -27,6 +27,8 @@ class RecordSerializer(serializers.ModelSerializer):
             'owner',
         ]
 
+    raw_content = serializers.CharField(write_only=True)
+
 
 class RecordCreateSerializer(serializers.ModelSerializer):
     class Meta:
