@@ -24,11 +24,9 @@ def _get_iota_content_hash(transaction_hash):
     return message.get("hash", None)
 
 
-def _invalidate_record_cache(pk):
-    list_cache_key = 'record_list'
-    retrieve_cache_key = 'record_retrieve_{}'.format(pk)
+def _invalidate_record_cache(owner_id):
+    list_cache_key = 'record_list_{}'.format(owner_id)
     cache.delete(list_cache_key)
-    cache.delete(retrieve_cache_key)
 
 
 @shared_task
@@ -36,7 +34,7 @@ def parse_record(pk):
     SUCCESS = "success"
     FAILURE = "failure"
     instance = Record.objects.get(pk=pk)
-    
+
     # Validate transaction_hash and get content hash on ledger
     iota_content_hash = None
     try:
@@ -45,7 +43,7 @@ def parse_record(pk):
     except Exception as error:
         logger.error(error)
         instance.transaction_hash_validated = FAILURE
-    
+
     # Verify content hash
     content_hash = hashlib.sha256(instance.raw_content.encode("utf-8")).hexdigest()
     if content_hash == iota_content_hash:
@@ -53,7 +51,7 @@ def parse_record(pk):
     else:
         logger.warning('Record id={} failed content hash verification'.format(pk))
         instance.content_hash_verified = FAILURE
-        
+
     try:
         parsed_content = json.loads(instance.raw_content)
         instance.content_parsed = SUCCESS
@@ -78,5 +76,5 @@ def parse_record(pk):
             data = ContentFile(base64.b64decode(photoByteString))
             file_name = "'photo.jpg"
             instance.photo.save(file_name, data, save=True)
-    _invalidate_record_cache(pk)
+    _invalidate_record_cache(instance.owner.id)
     instance.save()
