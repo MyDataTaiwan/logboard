@@ -32,7 +32,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             href = (
                 'https://' +
                 request.get_host() +
-                '/api/v1/records?uid=' +
+                '/logboard-frontend/' +
                 serializer.data['id']
             )
             response = {'href': href}
