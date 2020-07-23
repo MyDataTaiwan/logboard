@@ -1,11 +1,13 @@
-from datetime import datetime
+from datetime import date, datetime, time, timedelta
 import logging
+import pytz
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.http import HttpResponse
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -17,6 +19,98 @@ from apps.users.models import CustomUser
 
 
 logger = logging.getLogger(__name__)
+
+
+def simplify_records(records):
+    for record in records:
+        record.pop('proof')
+        record['vital_signs'] = {}
+        record['symptoms'] = {}
+        for field in record['fields']:
+            if (field['dataGroup'] == 'vitalSigns'):
+                record['vital_signs'][field['name']] = field['value']
+            elif (field['dataGroup']) == 'symptoms':
+                record['symptoms'][field['name']] = field['value']
+        record.pop('fields')
+    return records
+
+
+def parse_to_summary(records):
+    def update(arr, val, append, accumulate=False):
+        if append:
+            arr.append(val)
+        else:
+            if val is None:
+                pass
+            elif (isinstance(arr[-1], bool)):
+                arr[-1] = arr[-1] or val
+            elif (isinstance(arr[-1], (int, float))):
+                if accumulate:
+                    arr[-1] += val
+                else:
+                    arr[-1] = max(arr[-1], val)
+            else:
+                arr[-1] = val
+        return arr
+
+    records = simplify_records(records)
+    res = {
+        'id_list': [],
+        'date': [],
+        'vital_signs': {},
+        'symptoms': [],
+    }
+    for record in records:
+        date = record['timestamp'].split('T')[0]
+        append = (date not in res['date'])
+        update(res['date'], date, append)
+        if append:
+            res['id_list'].append([record['id']])
+        else:
+            res['id_list'][-1].append(record['id'])
+        for key, val in record['vital_signs'].items():
+            if not res['vital_signs'].get(key, None):
+                res['vital_signs'][key] = []
+            accumulate = (key == 'urineVolume')
+            update(res['vital_signs'][key], val, append, accumulate)
+        for key, val in record['symptoms'].items():
+            symptom = next((x for x in res['symptoms'] if x['name'] == key), None)
+            if not symptom:
+                symptom = {
+                    'name': key,
+                    'symptom': [],
+                }
+                res['symptoms'].append(symptom)
+            update(symptom['symptom'], val, append)
+
+    return res
+
+
+def parse_to_today(records):
+    records = simplify_records(records)
+    res = {
+        'id': [],
+        'timestamp': [],
+        'vital_signs': {},
+        'symptoms': [],
+    }
+    for record in records:
+        res['id'].append(record['id'])
+        res['timestamp'].append(record['timestamp']),
+        for key, val in record['vital_signs'].items():
+            if not res['vital_signs'].get(key, None):
+                res['vital_signs'][key] = []
+            res['vital_signs'][key].append(val)
+        for key, val in record['symptoms'].items():
+            symptom = next((x for x in res['symptoms'] if x['name'] == key), None)
+            if not symptom:
+                symptom = {
+                    'name': key,
+                    'symptom': [],
+                }
+                res['symptoms'].append(symptom)
+            symptom['symptom'].append(val)
+    return res
 
 
 class RecordViewSet(viewsets.ModelViewSet):
@@ -70,3 +164,84 @@ class RecordViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['GET'])
+    def summary(self, request):
+        def parse_date(date):
+            return datetime.strptime(date, '%Y-%m-%d')
+        id = request.query_params.get('uid', None)
+        if not id:
+            return Response(
+                {'error': ' uid must be specified'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        start_date = request.query_params.get('start_date', None)
+        end_date =  request.query_params.get('end_date', None)
+        if not start_date or not end_date:
+            return Response(
+                {'error': 'start_date and end_date must be specified'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        template = request.query_params.get('template', None)
+        if not template:
+             return Response(
+                 {'error': 'template must be specified'},
+                 status=status.HTTP_400_BAD_REQUEST
+             )
+        cache_key = 'summary_list_{}_{}_{}'.format(id, start_date, end_date)
+        #data = cache.get(cache_key)
+        #if data:
+        #    return Response(data, status.HTTP_200_OK)
+        try:
+            user = CustomUser.objects.get(pk=id)
+        except ObjectDoesNotExist:
+            error = {'error': 'User ID not found.'}
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            date_range = (
+                parse_date(start_date),
+                parse_date(end_date) + timedelta(days=1),
+            )
+        except:
+            return Response(
+                {'error': 'Either date format {} or {} is incorrect. Should be YYYY-MM-DD'.format(start_date, end_date)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
+        serializer = RecordSerializer(records, many=True)
+        res = parse_to_summary(serializer.data)
+        cache.set(cache_key, res)
+        return Response(res, status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def today(self, request):
+        def get_today():
+            return datetime.combine(date.today(), time())
+        id = request.query_params.get('uid', None)
+        if not id:
+            return Response(
+                {'error': ' uid must be specified'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        template = request.query_params.get('template', None)
+        if not template:
+            return Response(
+                {'error': 'template must be specified'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        cache_key = 'today_list_{}'.format(id)
+        #data = cache.get(cache_key)
+        #if data:
+        #    return Response(data, status.HTTP_200_OK)
+        try:
+            user = CustomUser.objects.get(pk=id)
+        except ObjectDoesNotExist:
+            error = {'error': 'User ID not found.'}
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        date_range = (get_today(), get_today() + timedelta(days=1))
+        records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
+        serializer = RecordSerializer(records, many=True)
+        res = parse_to_today(serializer.data)
+        cache.set(cache_key, res)
+        return Response(res, status.HTTP_200_OK)
+
