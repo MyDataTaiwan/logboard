@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "django_crontab",
+    "django_filters",
     'storages',
     "corsheaders",
     "rest_framework",
@@ -110,6 +111,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 

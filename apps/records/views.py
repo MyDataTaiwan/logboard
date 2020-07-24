@@ -1,10 +1,11 @@
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 import logging
 import pytz
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django_filters import rest_framework as filters
 from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -12,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 
+from apps.records.filters import RecordFilter
 from apps.records.models import Record
 from apps.records.serializers import RecordSerializer, RecordCreateSerializer
 from apps.records.tasks import parse_record
@@ -96,7 +98,9 @@ def parse_to_today(records):
     }
     for record in records:
         res['id'].append(record['id'])
-        res['timestamp'].append(record['timestamp']),
+        timestamp_datetime = datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        timestamp = timestamp_datetime.astimezone(pytz.timezone('Asia/Taipei')).strftime('%Y-%m-%d %H:%M:%S')
+        res['timestamp'].append(timestamp),
         for key, val in record['vital_signs'].items():
             if not res['vital_signs'].get(key, None):
                 res['vital_signs'][key] = []
@@ -116,6 +120,8 @@ def parse_to_today(records):
 class RecordViewSet(viewsets.ModelViewSet):
     #permission_classes = (IsAuthenticated,)
     serializer_class = RecordSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = RecordFilter
 
     def get_queryset(self):
         user = self.request.user
@@ -216,7 +222,8 @@ class RecordViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def today(self, request):
         def get_today():
-            return datetime.combine(date.today(), time())
+            now = datetime.now(pytz.timezone('Asia/Taipei'))
+            return datetime.combine(now.date(), time()) - timedelta(hours=8)
         id = request.query_params.get('uid', None)
         if not id:
             return Response(
@@ -239,9 +246,63 @@ class RecordViewSet(viewsets.ModelViewSet):
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         date_range = (get_today(), get_today() + timedelta(days=1))
+        logger.warning(date_range)
         records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
         res = parse_to_today(serializer.data)
+        cache.set(cache_key, res)
+        return Response(res, status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path='past-days')
+    def past_days(self, request):
+        def get_today():
+            now = datetime.now(pytz.timezone('Asia/Taipei'))
+            return datetime.combine(now.date(), time()) - timedelta(hours=8)
+        range_type = request.query_params.get('range', None)
+        if not range_type:
+            return Response(
+                {'error': ' range must be specified'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if range_type not in ['this-week', 'two-weeks', 'this-month']:
+            return Response(
+                {'error': ' invalid range'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        id = request.query_params.get('uid', None)
+        if not id:
+            return Response(
+                {'error': ' uid must be specified'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        template = request.query_params.get('template', None)
+        if not template:
+             return Response(
+                 {'error': 'template must be specified'},
+                 status=status.HTTP_400_BAD_REQUEST
+             )
+        try:
+            user = CustomUser.objects.get(pk=id)
+        except ObjectDoesNotExist:
+            error = {'error': 'User ID not found.'}
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+        if range_type == 'this-week':
+            start_date = get_today() - timedelta(days=7)
+        elif range_type == 'two-weeks':
+            start_date = get_today() - timedelta(days=14)
+        elif range_type == 'this-month':
+            start_date = get_today() - timedelta(days=30)
+        end_date = get_today() + timedelta(days=1)
+        date_range = (start_date, end_date)
+        cache_key = 'summary_list_{}_{}_{}'.format(id, start_date, end_date)
+        #data = cache.get(cache_key)
+        #if data:
+        #    return Response(data, status.HTTP_200_OK)
+
+        records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
+        serializer = RecordSerializer(records, many=True)
+        res = parse_to_summary(serializer.data)
         cache.set(cache_key, res)
         return Response(res, status.HTTP_200_OK)
 
