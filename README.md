@@ -13,9 +13,9 @@ $ python3 -m pip install -r requirements.txt
 
 Testing by development server. You need to:
 
-1. comment-out the SSL session in `mylog14Dashboard/settings.py`
+1. comment-out the SSL session in `logboard/settings.py`
 
-2. Change DEBUG to True in `mylog14Dashboard/settings.py`
+2. Change DEBUG to True in `logboard/settings.py`
 
 
 ```

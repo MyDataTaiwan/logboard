@@ -40,10 +40,10 @@ msgstr "位置"
 msgid "Symptoms"
 msgstr "症状"
 
-#: mylog14Dashboard/settings.py:177
+#: logboard/settings.py:177
 msgid "Traditional Chinese"
 msgstr "中国語（繁体字）"
 
-#: mylog14Dashboard/settings.py:178
+#: logboard/settings.py:178
 msgid "Japanese"
 msgstr "日本語"
