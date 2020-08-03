@@ -62,6 +62,7 @@ def parse_to_summary(records):
         'vital_signs': {},
         'symptoms': [],
         'photo_list': [],
+        'thumbnail_list': [],
     }
     for record in records:
         date = record['timestamp'].split('T')[0]
@@ -70,9 +71,11 @@ def parse_to_summary(records):
         if append:
             res['id_list'].append([record['id']])
             res['photo_list'].append([record['photo']])
+            res['thumbnail'].append([record['thumbnail']])
         else:
             res['id_list'][-1].append(record['id'])
             res['photo_list'][-1].append(record['photo'])
+            res['thumbnail'][-1].append([record['thumbnail']])
         for key, val in record['vital_signs'].items():
             if not res['vital_signs'].get(key, None):
                 res['vital_signs'][key] = []
@@ -99,6 +102,7 @@ def parse_to_today(records):
         'vital_signs': {},
         'symptoms': [],
         'photos': [],
+        'thumbnails': [],
     }
     for record in records:
         res['id'].append(record['id'])
@@ -119,6 +123,7 @@ def parse_to_today(records):
                 res['symptoms'].append(symptom)
             symptom['symptom'].append(val)
         res['photos'].append(record['photo'])
+        res['thumbnails'].append([record['thumbnail']])
     return res
 
 
