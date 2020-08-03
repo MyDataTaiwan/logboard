@@ -74,7 +74,7 @@ def parse_record(pk):
                     break
         if photoByteString:
             data = ContentFile(base64.b64decode(photoByteString))
-            file_name = "'photo.jpg"
+            file_name = "{}/{}.jpg".format(instance.owner.id, content_hash)
             instance.photo.save(file_name, data, save=True)
     _invalidate_record_cache(instance.owner.id)
     instance.save()

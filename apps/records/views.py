@@ -29,9 +29,9 @@ def simplify_records(records):
         record['vital_signs'] = {}
         record['symptoms'] = {}
         for field in record['fields']:
-            if (field['dataGroup'] == 'vitalSigns'):
+            if field['dataGroup'] == 'vitalSigns':
                 record['vital_signs'][field['name']] = field['value']
-            elif (field['dataGroup']) == 'symptoms':
+            elif field['dataGroup'] == 'symptoms':
                 record['symptoms'][field['name']] = field['value']
         record.pop('fields')
     return records
@@ -61,6 +61,7 @@ def parse_to_summary(records):
         'date': [],
         'vital_signs': {},
         'symptoms': [],
+        'photo_list': [],
     }
     for record in records:
         date = record['timestamp'].split('T')[0]
@@ -68,8 +69,10 @@ def parse_to_summary(records):
         update(res['date'], date, append)
         if append:
             res['id_list'].append([record['id']])
+            res['photo_list'].append([record['photo']])
         else:
             res['id_list'][-1].append(record['id'])
+            res['photo_list'][-1].append(record['photo'])
         for key, val in record['vital_signs'].items():
             if not res['vital_signs'].get(key, None):
                 res['vital_signs'][key] = []
@@ -95,6 +98,7 @@ def parse_to_today(records):
         'timestamp': [],
         'vital_signs': {},
         'symptoms': [],
+        'photos': [],
     }
     for record in records:
         res['id'].append(record['id'])
@@ -114,6 +118,7 @@ def parse_to_today(records):
                 }
                 res['symptoms'].append(symptom)
             symptom['symptom'].append(val)
+        res['photos'].append(record['photo'])
     return res
 
 
