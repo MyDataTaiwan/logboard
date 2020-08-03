@@ -40,10 +40,10 @@ msgstr "Locations"
 msgid "Symptoms"
 msgstr "Symptoms"
 
-#: mylog14Dashboard/settings.py:177
+#: logboard/settings.py:177
 msgid "Traditional Chinese"
 msgstr "Traditional Chinese"
 
-#: mylog14Dashboard/settings.py:178
+#: logboard/settings.py:178
 msgid "Japanese"
 msgstr "Japanese"

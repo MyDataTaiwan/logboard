@@ -126,3 +126,9 @@ dmypy.json
 
 # node.js
 node_modules/
+
+# django dev server static files
+static/
+
+# pid files
+.pid
