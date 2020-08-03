@@ -127,6 +127,24 @@ class RecordViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Record.objects.filter(owner=user).order_by('-id')
 
+    def retrieve(self, request, pk=None):
+        uid = request.query_params.get('uid', None)
+        no_valid_id_error = {
+            'error': 'Query param uid is required.',
+        }
+        if not uid:
+            return Response(no_valid_id_error, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = CustomUser.objects.get(pk=uid)
+        except ObjectDoesNotExist:
+            error = {'error': 'User ID not found.'}
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        logger.warning('dd')
+        records = Record.objects.filter(owner__id=uid).get(id=pk)
+        serializer = RecordSerializer(records)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
     def list(self, request):
         id = request.query_params.get('uid', None)
         no_valid_id_error = {
