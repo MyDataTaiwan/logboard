@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "djoser",
+    "drf_yasg",
     "sorl.thumbnail",
     "sorl_thumbnail_serializer",
     "apps.users",
