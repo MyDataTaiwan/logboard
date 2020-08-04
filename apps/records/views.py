@@ -149,7 +149,6 @@ class RecordViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist:
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
-        logger.warning('dd')
         records = Record.objects.filter(owner__id=uid).get(id=pk)
         serializer = RecordSerializer(records)
         return Response(serializer.data, status.HTTP_200_OK)
@@ -172,16 +171,6 @@ class RecordViewSet(viewsets.ModelViewSet):
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         records = Record.objects.filter(owner__id=id).order_by('timestamp')
-        serializer = RecordSerializer(records, many=True)
-        cache.set(cache_key, serializer.data)
-        return Response(serializer.data, status.HTTP_200_OK)
-
-    def retrieve(self, request, pk=None):
-        cache_key = 'record_retrieve_{}'.format(pk)
-        data = cache.get(cache_key)
-        if data:
-            return Response(data, status.HTTP_200_OK)
-        records = self.get_queryset()
         serializer = RecordSerializer(records, many=True)
         cache.set(cache_key, serializer.data)
         return Response(serializer.data, status.HTTP_200_OK)
