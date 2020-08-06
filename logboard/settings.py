@@ -21,6 +21,7 @@ from celery.schedules import crontab
 env = environ.Env(
     DEBUG=(bool, False),
     ADMIN_ENABLED=(bool, False),
+    HOST_NAMES=(str, ''),
     DATABASE_ROOT=(str, '/opt/logboard/database'),
     DEFAULT_DATABASE_BACKEND=(str, 'sqlite'),
     DEFAULT_STORAGE_BACKEND=(str, 'local'),
