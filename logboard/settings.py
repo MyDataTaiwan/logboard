@@ -18,7 +18,16 @@ from django.utils.translation import gettext_lazy as _
 from celery.schedules import crontab
 
 
-env = environ.Env()
+env = environ.Env(
+    DEBUG=(bool, False),
+    ADMIN_ENABLED=(bool, False),
+    DATABASE_ROOT=(str, '/opt/logboard/database'),
+    DEFAULT_DATABASE_BACKEND=(str, 'sqlite'),
+    DEFAULT_STORAGE_BACKEND=(str, 'local'),
+    MEDIA_ROOT=(str, '/opt/logboard/media'),
+    STATIC_ROOT=(str, '/var/www/html/static'),
+    BROKER_URL=(str, 'redis://localhost:6379/0'),
+)
 env.read_env('.env')
 
 
