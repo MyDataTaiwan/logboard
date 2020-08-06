@@ -14,6 +14,7 @@ import environ
 import logging.config
 import os
 from django.utils.log import DEFAULT_LOGGING
+from django.utils.translation import gettext_lazy as _
 from celery.schedules import crontab
 
 
@@ -202,13 +203,13 @@ logging.config.dictConfig(
         },
         "handlers": {
             # console logs to stderr
-            "console": {"class": "logging.StreamHandler", "formatter": "default",},
+            "console": {"class": "logging.StreamHandler", "formatter": "default"},
             "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
         },
         "loggers": {
             # default for all undefined Python modules
-            "": {"level": "WARNING", "handlers": ["console"],},
-            "dashboard": {"level": "DEBUG", "handlers": ["console"],},
+            "": {"level": "WARNING", "handlers": ["console"]},
+            "dashboard": {"level": "DEBUG", "handlers": ["console"]},
             "noisy_module": {
                 "level": "ERROR",
                 "handlers": ["console"],
@@ -228,25 +229,24 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-from django.utils.translation import gettext_lazy as _
 
-## Supported languages
+# Supported languages
 LANGUAGES = (
     ("en", ("English")),
     ("zh-hant", _("Traditional Chinese")),
     ("ja", _("Japanese")),
 )
 
-## Where to store the locale files
+# Where to store the locale files
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 LANGUAGE_CODE = "en-us"
@@ -279,10 +279,6 @@ CSRF_COOKIE_SECURE = False
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-# Unique URL Settings https://github.com/Sikilabs/django-unique
-UNIQUE_URL_OBJECT: "Measurement"
-UNIQUE_EXP_DATE: 72
-UNIQUE_MAX_CLICS: 35
 
 # Celery settings
 

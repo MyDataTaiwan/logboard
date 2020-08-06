@@ -17,11 +17,8 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 from django.conf.urls import url
-from django.conf.urls.static import static
 from django.urls import path, include
-from django.views.generic import TemplateView
-from rest_framework import permissions, routers, viewsets
-from rest_framework.authtoken import views
+from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -30,16 +27,16 @@ from apps.users.views import CustomUserViewSet
 
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="LogBoard API",
-      default_version='v1',
-      description="Logboard v0.5.0",
-      terms_of_service="",
-      contact=openapi.Contact(email=""),
-      license=openapi.License(name="GPL-3.0 License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="LogBoard API",
+        default_version='v1',
+        description="Logboard v0.5.0",
+        terms_of_service="",
+        contact=openapi.Contact(email=""),
+        license=openapi.License(name="GPL-3.0 License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 router = routers.DefaultRouter()

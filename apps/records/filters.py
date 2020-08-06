@@ -12,4 +12,4 @@ class RecordFilter(django_filters.FilterSet):
 
     class Meta:
         model = Record
-        fields = ('uid', 'id','template', 'start_date', 'end_date')
+        fields = ('uid', 'id', 'template', 'start_date', 'end_date')

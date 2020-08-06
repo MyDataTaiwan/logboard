@@ -1,6 +1,4 @@
-import json
 import logging
-import os
 
 from rest_framework import serializers
 from apps.users.models import CustomUser

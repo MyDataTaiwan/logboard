@@ -1,10 +1,7 @@
 from datetime import datetime, timedelta
 
-from celery import Celery, shared_task
-from celery.schedules import crontab
+from celery import shared_task
 from celery.utils.log import get_task_logger
-from django.core.cache import cache
-from django.utils.timezone import make_aware
 
 from apps.users.models import CustomUser
 

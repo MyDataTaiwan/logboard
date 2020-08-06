@@ -9,11 +9,14 @@ class Record(models.Model):
     transaction_hash_validated = models.CharField(max_length=255, default="pending")
     content_hash_verified = models.CharField(max_length=255, default="pending")
     content_parsed = models.CharField(max_length=255, default="pending")
-    template_name = models.CharField(max_length=255, null=True)
+    template_name = models.CharField(max_length=255, blank=True)
     timestamp = models.DateTimeField(null=True)
     proof = JSONField(null=True)
     fields = JSONField(null=True)
-    photo = models.ImageField(null=True)
+    photo = models.ImageField(blank=True)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="records", on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.transaction_hash

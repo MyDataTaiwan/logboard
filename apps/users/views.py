@@ -1,12 +1,7 @@
 import logging
 
-from django.core.files.base import ContentFile
-from django.http import HttpResponse
 from rest_framework import status, viewsets
-from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.users.models import CustomUser
 from apps.users.serializers import CustomUserSerializer
@@ -30,10 +25,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             href = (
-                'https://' +
-                request.get_host() +
-                '/logboard-frontend/' +
-                serializer.data['id']
+                'https://' + request.get_host() + '/logboard-frontend/' + serializer.data['id']
             )
             response = {'href': href}
             response.update(serializer.data)

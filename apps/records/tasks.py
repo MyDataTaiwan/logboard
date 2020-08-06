@@ -7,7 +7,6 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.core.cache import cache
 from django.utils.timezone import make_aware
-from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from niota import niota
 

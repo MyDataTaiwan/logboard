@@ -1,10 +1,7 @@
-import hashlib
-import json
 import logging
 
 from rest_framework import serializers
 from apps.records.models import Record
-from apps.users.models import CustomUser
 from sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
 
 
@@ -36,7 +33,6 @@ class RecordSerializer(serializers.ModelSerializer):
         source='photo',
         read_only=True,
     )
-
 
 
 class RecordCreateSerializer(serializers.ModelSerializer):

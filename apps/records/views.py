@@ -1,4 +1,4 @@
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import datetime, time, timedelta
 import logging
 import pytz
 
@@ -6,12 +6,9 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django_filters import rest_framework as filters
-from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.records.filters import RecordFilter
 from apps.records.models import Record
@@ -128,7 +125,7 @@ def parse_to_today(records):
 
 
 class RecordViewSet(viewsets.ModelViewSet):
-    #permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     serializer_class = RecordSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecordFilter
@@ -145,14 +142,13 @@ class RecordViewSet(viewsets.ModelViewSet):
         if not uid:
             return Response(no_valid_id_error, status=status.HTTP_400_BAD_REQUEST)
         try:
-            user = CustomUser.objects.get(pk=uid)
+            CustomUser.objects.get(pk=uid)
         except ObjectDoesNotExist:
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         records = Record.objects.filter(owner__id=uid).get(id=pk)
         serializer = RecordSerializer(records)
         return Response(serializer.data, status.HTTP_200_OK)
-
 
     def list(self, request):
         id = request.query_params.get('uid', None)
@@ -166,7 +162,7 @@ class RecordViewSet(viewsets.ModelViewSet):
         if data:
             return Response(data, status.HTTP_200_OK)
         try:
-            user = CustomUser.objects.get(pk=id)
+            CustomUser.objects.get(pk=id)
         except ObjectDoesNotExist:
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
@@ -177,7 +173,10 @@ class RecordViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         if request.user.is_anonymous:
-            return Response({'detail':'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {'detail': 'Authentication credentials were not provided.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
         cache_key = 'record_list_{}'.format(request.user.id)
         serializer = RecordCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
@@ -199,7 +198,7 @@ class RecordViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         start_date = request.query_params.get('start_date', None)
-        end_date =  request.query_params.get('end_date', None)
+        end_date = request.query_params.get('end_date', None)
         if not start_date or not end_date:
             return Response(
                 {'error': 'start_date and end_date must be specified'},
@@ -207,16 +206,12 @@ class RecordViewSet(viewsets.ModelViewSet):
             )
         template = request.query_params.get('template', None)
         if not template:
-             return Response(
-                 {'error': 'template must be specified'},
-                 status=status.HTTP_400_BAD_REQUEST
-             )
-        cache_key = 'summary_list_{}_{}_{}'.format(id, start_date, end_date)
-        #data = cache.get(cache_key)
-        #if data:
-        #    return Response(data, status.HTTP_200_OK)
+            return Response(
+                {'error': 'template must be specified'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
-            user = CustomUser.objects.get(pk=id)
+            CustomUser.objects.get(pk=id)
         except ObjectDoesNotExist:
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
@@ -225,15 +220,20 @@ class RecordViewSet(viewsets.ModelViewSet):
                 parse_date(start_date),
                 parse_date(end_date) + timedelta(days=1),
             )
-        except:
+        except ValueError:
             return Response(
-                {'error': 'Either date format {} or {} is incorrect. Should be YYYY-MM-DD'.format(start_date, end_date)},
+                {
+                    'error': 'Either date format {} or {} is incorrect. Should be YYYY-MM-DD'.format(
+                        start_date, end_date
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
-        records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
+        records = Record.objects.filter(
+            owner__id=id, template_name__exact=template, timestamp__range=date_range
+        ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
         res = parse_to_summary(serializer.data)
-        cache.set(cache_key, res)
         return Response(res, status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
@@ -253,21 +253,18 @@ class RecordViewSet(viewsets.ModelViewSet):
                 {'error': 'template must be specified'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        cache_key = 'today_list_{}'.format(id)
-        #data = cache.get(cache_key)
-        #if data:
-        #    return Response(data, status.HTTP_200_OK)
         try:
-            user = CustomUser.objects.get(pk=id)
+            CustomUser.objects.get(pk=id)
         except ObjectDoesNotExist:
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         date_range = (get_today(), get_today() + timedelta(days=1))
         logger.warning(date_range)
-        records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
+        records = Record.objects.filter(
+            owner__id=id, template_name__exact=template, timestamp__range=date_range
+        ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
         res = parse_to_today(serializer.data)
-        cache.set(cache_key, res)
         return Response(res, status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='past-days')
@@ -294,12 +291,12 @@ class RecordViewSet(viewsets.ModelViewSet):
             )
         template = request.query_params.get('template', None)
         if not template:
-             return Response(
-                 {'error': 'template must be specified'},
-                 status=status.HTTP_400_BAD_REQUEST
-             )
+            return Response(
+                {'error': 'template must be specified'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
-            user = CustomUser.objects.get(pk=id)
+            CustomUser.objects.get(pk=id)
         except ObjectDoesNotExist:
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
@@ -312,14 +309,9 @@ class RecordViewSet(viewsets.ModelViewSet):
             start_date = get_today() - timedelta(days=30)
         end_date = get_today() + timedelta(days=1)
         date_range = (start_date, end_date)
-        cache_key = 'summary_list_{}_{}_{}'.format(id, start_date, end_date)
-        #data = cache.get(cache_key)
-        #if data:
-        #    return Response(data, status.HTTP_200_OK)
-
-        records = Record.objects.filter(owner__id=id, template_name__exact=template, timestamp__range=date_range).order_by('timestamp')
+        records = Record.objects.filter(
+            owner__id=id, template_name__exact=template, timestamp__range=date_range
+        ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
         res = parse_to_summary(serializer.data)
-        cache.set(cache_key, res)
         return Response(res, status.HTTP_200_OK)
-
