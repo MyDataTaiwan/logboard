@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: TickX/var-to-dotenv@v1.1.1
+      with:
+        key: 'SECRET_KEY'
+        value: ${{ secrets.SECRET_KEY }}
+        envPath: '.env'
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
