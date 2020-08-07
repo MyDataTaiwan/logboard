@@ -140,7 +140,10 @@ database_backends = {
         'NAME': os.path.join(env('DATABASE_ROOT'), 'db.sqlite3'),
         "ATOMIC_REQUESTS": True,
     },
-    'postgresql': {
+}
+
+if env('DEFAULT_DATABASE_BACKEND') == 'postgresql':
+    database_backends['postgresql'] = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': env('POSTGRESQL_DB_NAME'),
         'USER': env('POSTGRESQL_USERNAME'),
@@ -149,7 +152,6 @@ database_backends = {
         'PORT': env('POSTGRESQL_PORT'),
         "ATOMIC_REQUESTS": True,
     }
-}
 
 default_database = database_backends.get(
     env('DEFAULT_DATABASE_BACKEND'),
