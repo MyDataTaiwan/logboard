@@ -5,7 +5,7 @@ from django.db import models
 
 class Record(models.Model):
     raw_content = models.TextField()
-    transaction_hash = models.CharField(max_length=255)
+    transaction_hash = models.CharField(max_length=255, blank=True)
     transaction_hash_validated = models.CharField(max_length=255, default="pending")
     content_hash_verified = models.CharField(max_length=255, default="pending")
     content_parsed = models.CharField(max_length=255, default="pending")

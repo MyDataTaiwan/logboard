@@ -178,6 +178,7 @@ class RecordViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         cache_key = 'record_list_{}'.format(request.user.id)
+        logger.warning(request.data)
         serializer = RecordCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
@@ -185,6 +186,7 @@ class RecordViewSet(viewsets.ModelViewSet):
             cache.delete(cache_key)
             return Response(serializer.data, status.HTTP_201_CREATED)
         else:
+            logger.error(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['GET'])

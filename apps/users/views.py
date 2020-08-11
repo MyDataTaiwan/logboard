@@ -25,9 +25,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             href = (
-                'https://' + request.get_host() + '/logboard-frontend/' + serializer.data['id']
+                'https://logboard-qa.numbersprotocol.io/' + serializer.data['id']
             )
-            response = {'href': href}
+            response = {'href': href }
             response.update(serializer.data)
             return Response(response, status.HTTP_201_CREATED)
         logger.critical('serializer is not valid. errors: {}'.format(serializer.errors))
