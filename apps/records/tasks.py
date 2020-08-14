@@ -58,7 +58,6 @@ def parse_record(pk):
         logger.error(error)
         instance.content_parsed = FAILURE
     if instance.content_parsed == SUCCESS:
-        instance.template_name = parsed_content.get("templateName", None)
         app_timestamp = parsed_content.get("timestamp", None)
         if app_timestamp:
             instance.timestamp = make_aware(datetime.fromtimestamp(app_timestamp // 1000))
@@ -67,7 +66,7 @@ def parse_record(pk):
         photoByteString = None
         if instance.fields:
             for idx, field in enumerate(instance.fields):
-                if field.get('type', None) == 'photo' and field.get('value', None):
+                if field.get('name', None) == 'photo' and field.get('value', None):
                     photoField = instance.fields.pop(idx)
                     photoByteString = photoField.get('value', None)
                     break

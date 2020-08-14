@@ -38,7 +38,7 @@ class RecordSerializer(serializers.ModelSerializer):
 class RecordCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
-        fields = ['id', 'raw_content', 'transaction_hash', 'owner']
+        fields = ['id', 'raw_content', 'transaction_hash', 'template_name','owner']
         read_only_fields = ['id', 'owner']
 
     def create(self, validated_data):

@@ -15,26 +15,31 @@ from apps.records.models import Record
 from apps.records.serializers import RecordSerializer, RecordCreateSerializer
 from apps.records.tasks import parse_record
 from apps.users.models import CustomUser
+from utils.data_template import DataTemplate
 
 
 logger = logging.getLogger(__name__)
 
 
-def simplify_records(records):
+def simplify_records(records: list, template_name: str):
+    template = DataTemplate(template_name)
     for record in records:
         record.pop('proof')
         record['vital_signs'] = {}
         record['symptoms'] = {}
         for field in record['fields']:
-            if field['dataGroup'] == 'vitalSigns':
-                record['vital_signs'][field['name']] = field['value']
-            elif field['dataGroup'] == 'symptoms':
-                record['symptoms'][field['name']] = field['value']
+            name = field['name']
+            value = field['value']
+            data_group = template.get_field_attr(name, 'dataGroup')
+            if data_group == 'vitalSigns':
+                record['vital_signs'][name] = value
+            elif data_group == 'symptoms' or data_group == 'checklist':
+                record['symptoms'][name] = value
         record.pop('fields')
     return records
 
 
-def parse_to_summary(records):
+def parse_to_summary(records: list, template_name: str):
     def update(arr, val, append, accumulate=False):
         if append:
             arr.append(val)
@@ -52,7 +57,7 @@ def parse_to_summary(records):
                 arr[-1] = val
         return arr
 
-    records = simplify_records(records)
+    records = simplify_records(records, template_name)
     res = {
         'id_list': [],
         'date': [],
@@ -91,8 +96,8 @@ def parse_to_summary(records):
     return res
 
 
-def parse_to_today(records):
-    records = simplify_records(records)
+def parse_to_today(records: list, template_name: str):
+    records = simplify_records(records, template_name)
     res = {
         'id': [],
         'timestamp': [],
@@ -178,7 +183,6 @@ class RecordViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         cache_key = 'record_list_{}'.format(request.user.id)
-        logger.warning(request.data)
         serializer = RecordCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
@@ -235,7 +239,7 @@ class RecordViewSet(viewsets.ModelViewSet):
             owner__id=id, template_name__exact=template, timestamp__range=date_range
         ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
-        res = parse_to_summary(serializer.data)
+        res = parse_to_summary(serializer.data, template)
         return Response(res, status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
@@ -261,12 +265,11 @@ class RecordViewSet(viewsets.ModelViewSet):
             error = {'error': 'User ID not found.'}
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         date_range = (get_today(), get_today() + timedelta(days=1))
-        logger.warning(date_range)
         records = Record.objects.filter(
             owner__id=id, template_name__exact=template, timestamp__range=date_range
         ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
-        res = parse_to_today(serializer.data)
+        res = parse_to_today(serializer.data, template)
         return Response(res, status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='past-days')
@@ -315,5 +318,5 @@ class RecordViewSet(viewsets.ModelViewSet):
             owner__id=id, template_name__exact=template, timestamp__range=date_range
         ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
-        res = parse_to_summary(serializer.data)
+        res = parse_to_summary(serializer.data, template)
         return Response(res, status.HTTP_200_OK)
