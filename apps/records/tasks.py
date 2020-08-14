@@ -58,6 +58,7 @@ def parse_record(pk):
         logger.error(error)
         instance.content_parsed = FAILURE
     if instance.content_parsed == SUCCESS:
+        instance.template_name = parsed_content.get("templateName", '')
         app_timestamp = parsed_content.get("timestamp", None)
         if app_timestamp:
             instance.timestamp = make_aware(datetime.fromtimestamp(app_timestamp // 1000))
