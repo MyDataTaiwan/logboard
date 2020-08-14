@@ -32,11 +32,11 @@ services:
 
   app:
     build: .
-    command: sh -c "wait-for postgres:5432 && python manage.py collectstatic --no-input && python manage.py migrate && gunicorn mysite.wsgi -b 0.0.0.0:8000"
+    command: sh -c "wait-for postgres:5432 && python manage.py collectstatic --no-input && python manage.py migrate && gunicorn logboard.wsgi -b 0.0.0.0:8000"
     container_name: app
     depends_on:
       - postgres
-      - rabbitmq
+      - redis
     expose:
       - "8000"
     hostname: app
@@ -46,12 +46,12 @@ services:
     restart: on-failure
 
   celery_worker:
-    command: sh -c "wait-for rabbitmq:5672 && wait-for app:8000 -- celery -A mysite worker -l info"
+    command: sh -c "wait-for redis:6379 && wait-for app:8000 -- celery -A logboard worker -l info"
     container_name: celery_worker
     depends_on:
       - app
       - postgres
-      - rabbitmq
+      - redis
     deploy:
       replicas: 2
       restart_policy:
@@ -70,12 +70,12 @@ services:
     restart: on-failure
 
   celery_beat:
-    command: sh -c "wait-for rabbitmq:5672 && wait-for app:8000 -- celery -A mysite beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    command: sh -c "wait-for redis:6379 && wait-for app:8000 -- celery -A logboard beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     container_name: celery_beat
     depends_on:
       - app
       - postgres
-      - rabbitmq
+      - redis
     hostname: celery_beat
     image: app-image
     networks:
