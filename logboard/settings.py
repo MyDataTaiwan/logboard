@@ -32,6 +32,10 @@ env = environ.Env(
 env.read_env('.env')
 
 
+def get_env(env_name: str):
+    return os.environ.get(env_name, env(env_name))
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,18 +44,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = get_env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = get_env('DEBUG')
 
 # Disable admin page in production
-ADMIN_ENABLED = env('DEBUG')
+ADMIN_ENABLED = get_env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
-if env('HOST_NAMES') != '':
-    host_names = env('HOST_NAMES').strip(' ').split(',')
+host_names_str = get_env('HOST_NAMES')
+if host_names_str != '':
+    host_names = host_names_str.strip(' ').split(',')
     ALLOWED_HOSTS = ALLOWED_HOSTS + host_names
 
 
@@ -137,24 +142,24 @@ REST_FRAMEWORK = {
 database_backends = {
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(env('DATABASE_ROOT'), 'db.sqlite3'),
+        'NAME': os.path.join(get_env('DATABASE_ROOT'), 'db.sqlite3'),
         "ATOMIC_REQUESTS": True,
     },
 }
 
-if env('DEFAULT_DATABASE_BACKEND') == 'postgresql':
+if get_env('DEFAULT_DATABASE_BACKEND') == 'postgresql':
     database_backends['postgresql'] = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('POSTGRESQL_DB_NAME'),
-        'USER': env('POSTGRESQL_USERNAME'),
-        'PASSWORD': env('POSTGRESQL_PASSWORD'),
-        'HOST': env('POSTGRESQL_HOSTNAME'),
-        'PORT': env('POSTGRESQL_PORT'),
+        'NAME': get_env('POSTGRESQL_DB_NAME'),
+        'USER': get_env('POSTGRESQL_USERNAME'),
+        'PASSWORD': get_env('POSTGRESQL_PASSWORD'),
+        'HOST': get_env('POSTGRESQL_HOSTNAME'),
+        'PORT': get_env('POSTGRESQL_PORT'),
         "ATOMIC_REQUESTS": True,
     }
 
 default_database = database_backends.get(
-    env('DEFAULT_DATABASE_BACKEND'),
+    get_env('DEFAULT_DATABASE_BACKEND'),
     None
 )
 
@@ -168,7 +173,7 @@ DATABASES = {
 
 # AWS S3 Settings
 
-default_storage_backend = env('DEFAULT_STORAGE_BACKEND')
+default_storage_backend = get_env('DEFAULT_STORAGE_BACKEND')
 if default_storage_backend == 'local':
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 elif default_storage_backend == 's3':
@@ -176,15 +181,15 @@ elif default_storage_backend == 's3':
     AWS_S3_HOST = 's3.amazonaws.com'
     S3_USE_SIGV4 = True
     AWS_QUERYSTRING_AUTH = True
-    AWS_QUERYSTRING_EXPIRE = env('S3_QUERYSTRING_EXPIRE')
-    AWS_ACCESS_KEY_ID = env('S3_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = env('S3_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = env('S3_STORAGE_BUCKET_NAME')
+    AWS_QUERYSTRING_EXPIRE = get_env('S3_QUERYSTRING_EXPIRE')
+    AWS_ACCESS_KEY_ID = get_env('S3_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = get_env('S3_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = get_env('S3_STORAGE_BUCKET_NAME')
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_S3_ENCRYPTION = True if env('S3_ENCRYPTION') == 'True' else False
+    AWS_S3_ENCRYPTION = True if get_env('S3_ENCRYPTION') == 'True' else False
 
 CACHES = {
     "default": {
@@ -276,11 +281,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = env('STATIC_ROOT')
+STATIC_ROOT = get_env('STATIC_ROOT')
 
 # Upload files
 MEDIA_URL = '/files/'
-MEDIA_ROOT = env('MEDIA_ROOT')
+MEDIA_ROOT = get_env('MEDIA_ROOT')
 
 # SSL
 
@@ -294,7 +299,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Celery settings
 
-CELERY_BROKER_URL = env('BROKER_URL')
+CELERY_BROKER_URL = get_env('BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 
 CELERY_BEAT_SCHEDULE = {
