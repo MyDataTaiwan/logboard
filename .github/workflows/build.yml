@@ -35,9 +35,13 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov=apps --cov-config=tox.ini  --cov-report=html
-    - name: Deploy
+    - name: Deploy test coverage
       if: github.ref == 'refs/heads/develop'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./htmlcov
+    - name: Build the dockers
+      run: docker-compose up -d
+    - name: Test the dockers
+      run: docker run --network container:app appropriate/curl -s --retry 10 --retry-connrefused http://localhost:8000/
