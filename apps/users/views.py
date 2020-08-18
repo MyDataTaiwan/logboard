@@ -25,7 +25,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = CustomUserSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
-            host = os.environ.get('HOST_NAMES', 'https://logboard.numbersprotocol.io')
+            host = os.environ.get('HOST_NAMES', 'https://logboard.numbersprotocol.io').replace('api.', '')
             href = (
                 host + '/' + serializer.data['id']
             )
