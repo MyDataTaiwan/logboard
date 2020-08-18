@@ -1,5 +1,23 @@
 version: '3.4'
 
+x-app-variables: &app-variables
+  SECRET_KEY: ${SECRET_KEY}
+  HOST_NAMES: ${HOST_NAMES}
+  DEFAULT_DATABASE_BACKEND: postgresql
+  POSTGRESQL_DB_NAME: ${POSTGRESQL_DB_NAME}
+  POSTGRESQL_USERNAME: ${POSTGRESQL_USERNAME}
+  POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD}
+  POSTGRESQL_HOSTNAME: postgres
+  POSTGRESQL_PORT: 5432
+  DEFAULT_STORAGE_BACKEND: s3
+  S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+  S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+  S3_STORAGE_BUCKET_NAME: ${S3_STORAGE_BUCKET_NAME}
+  S3_QUERYSTRING_EXPIRE: 3600
+  S3_ENCRYPTION: 'True'
+  BROKER_URL: redis://redis:6379/0
+
+
 services:
 
   redis:
@@ -19,9 +37,9 @@ services:
     hostname: postgres
     image: postgres:latest
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     networks:
       - main
     ports:
@@ -32,26 +50,30 @@ services:
 
   app:
     build: .
-    command: sh -c "wait-for postgres:5432 && python manage.py collectstatic --no-input && python manage.py migrate && gunicorn mysite.wsgi -b 0.0.0.0:8000"
+    command: sh -c "wait-for postgres:5432 && python manage.py collectstatic --no-input && python manage.py migrate && gunicorn logboard.wsgi -b 0.0.0.0:8000"
     container_name: app
     depends_on:
       - postgres
-      - rabbitmq
+      - redis
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     hostname: app
     image: app-image
+    environment:
+      <<: *app-variables
     networks:
       - main
     restart: on-failure
 
   celery_worker:
-    command: sh -c "wait-for rabbitmq:5672 && wait-for app:8000 -- celery -A mysite worker -l info"
+    command: sh -c "wait-for redis:6379 && wait-for app:8000 -- celery -A logboard worker -l info"
     container_name: celery_worker
     depends_on:
       - app
       - postgres
-      - rabbitmq
+      - redis
     deploy:
       replicas: 2
       restart_policy:
@@ -65,19 +87,23 @@ services:
           memory: 20M
     hostname: celery_worker
     image: app-image
+    environment:
+      <<: *app-variables
     networks:
       - main
     restart: on-failure
 
   celery_beat:
-    command: sh -c "wait-for rabbitmq:5672 && wait-for app:8000 -- celery -A mysite beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    command: sh -c "wait-for redis:6379 && wait-for app:8000 -- celery -A logboard beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     container_name: celery_beat
     depends_on:
       - app
       - postgres
-      - rabbitmq
+      - redis
     hostname: celery_beat
     image: app-image
+    environment:
+      <<: *app-variables
     networks:
       - main
     restart: on-failure
@@ -87,3 +113,4 @@ networks:
 
 volumes:
   postgresql-data:
+  redisdata:

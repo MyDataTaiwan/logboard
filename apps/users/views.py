@@ -1,4 +1,5 @@
 import logging
+import os
 
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -24,8 +25,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer = CustomUserSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
+            host = os.environ.get('HOST_NAMES', 'https://logboard.numbersprotocol.io')
             href = (
-                'https://logboard-qa.numbersprotocol.io/' + serializer.data['id']
+                host + '/' + serializer.data['id']
             )
             response = {'href': href }
             response.update(serializer.data)
