@@ -24,6 +24,12 @@ services:
     container_name: redis
     hostname: redis
     image: redis:alpine
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: ${LOG_GROUP}
+        awslogs-stream: "redis"
     networks:
       - main
     ports:
@@ -36,6 +42,12 @@ services:
     container_name: postgres
     hostname: postgres
     image: postgres:latest
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: ${LOG_GROUP}
+        awslogs-stream: "postgres"
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -61,6 +73,12 @@ services:
       - "8000"
     hostname: app
     image: app-image
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: ${LOG_GROUP}
+        awslogs-stream: "app"
     environment:
       <<: *app-variables
     networks:
@@ -87,6 +105,12 @@ services:
           memory: 20M
     hostname: celery_worker
     image: app-image
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: ${LOG_GROUP}
+        awslogs-stream: "celery-worker"
     environment:
       <<: *app-variables
     networks:
@@ -102,6 +126,12 @@ services:
       - redis
     hostname: celery_beat
     image: app-image
+    logging:
+      driver: "awslogs"
+      options:
+        awslogs-region: "us-east-1"
+        awslogs-group: ${LOG_GROUP}
+        awslogs-stream: "celery-beat"
     environment:
       <<: *app-variables
     networks:
