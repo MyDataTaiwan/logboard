@@ -69,7 +69,8 @@ def parse_to_summary(records: list, template_name: str):
         'thumbnail_list': [],
     }
     for record in records:
-        date = record['timestamp'].split('T')[0]
+        timestamp_datetime = datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        date = timestamp_datetime.astimezone(pytz.timezone('Asia/Taipei')).strftime('%Y-%m-%d')
         append = (date not in res['date'])
         update(res['date'], date, append)
         if append:
@@ -198,7 +199,7 @@ class RecordViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def summary(self, request):
         def parse_date(date):
-            return datetime.strptime(date, '%Y-%m-%d')
+            return datetime.strptime(date, '%Y-%m-%d') - timedelta(hours=8)
         id = request.query_params.get('uid', None)
         if not id:
             return Response(
