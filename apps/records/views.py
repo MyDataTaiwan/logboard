@@ -22,9 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def simplify_records(records: list, template_name: str):
-    logger.warning('1')
     template = DataTemplate(template_name)
-    logger.warning(records)
     for record in records:
         record.pop('proof')
         record['vital_signs'] = {}
@@ -35,7 +33,6 @@ def simplify_records(records: list, template_name: str):
             data_group = template.get_field_attr(name, 'dataGroup')
             if not data_group:
                 data_group = field.get('dataGroup', None)
-            logger.warning(data_group)
             if data_group == 'vitalSigns':
                 record['vital_signs'][name] = value
             elif data_group == 'symptoms' or data_group == 'checklist':
@@ -72,7 +69,8 @@ def parse_to_summary(records: list, template_name: str):
         'thumbnail_list': [],
     }
     for record in records:
-        date = record['timestamp'].split('T')[0]
+        timestamp_datetime = datetime.strptime(record['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+        date = timestamp_datetime.astimezone(pytz.timezone('Asia/Taipei')).strftime('%Y-%m-%d')
         append = (date not in res['date'])
         update(res['date'], date, append)
         if append:
@@ -201,7 +199,7 @@ class RecordViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def summary(self, request):
         def parse_date(date):
-            return datetime.strptime(date, '%Y-%m-%d')
+            return datetime.strptime(date, '%Y-%m-%d') - timedelta(hours=8)
         id = request.query_params.get('uid', None)
         if not id:
             return Response(
