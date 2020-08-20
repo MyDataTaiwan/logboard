@@ -1,43 +1,38 @@
-# mylog14-dashboard
+# logboard
 
-Frontend for government employees to track custodian data, built on Django Framework with Class Views.
+![develop](https://github.com/MyDataTaiwan/logboard/workflows/develop/badge.svg)
 
-Dependencies can be found in requirements.txt
+API backend for [mylog14](https://github.com/MyDataTaiwan/mylog14), an open source health record App.
 
-# Setup
+# Run
 
-```
-$ python3 -m pip install Django
-$ python3 -m pip install -r requirements.txt
-```
-
-Testing by development server. You need to:
-
-1. comment-out the SSL session in `logboard/settings.py`
-
-2. Change DEBUG to True in `logboard/settings.py`
-
+1. Create a `env.sh` file wtih required environment variables:
 
 ```
-$ python3 manage.py makemigrations
-$ python3 manage.py migrate
-$ python3 manage.py runserver
-$ sensible-browser http://localhost:8000
+#!/bin/bash
+
+export LOG_GROUP=<AWS_LOG_GROUP>
+export SECRET_KEY=<DJANGO_SECRET_KEY>
+export HOST_NAMES=<HOST_NAME>
+export FRONTEND_HOST_NAME=<FRONTEND_HOST_NAME>
+export POSTGRES_DB=<DB_NAME>
+export POSTGRESQL_DB_NAME=<DB_NAME>
+export POSTGRES_USER=<DB_USER_NAME>
+export POSTGRESQL_USERNAME=<DB_USER_NAME>
+export POSTGRES_PASSWORD=<DB_USER_PASSWORD>
+export POSTGRESQL_PASSWORD=<DB_USER_PASSWORD>
+export POSTGRESQL_HOSTNAME=<DB_HOST_NAME>
+export S3_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
+export S3_SECRET_ACCESS_KEY=<AWS_ACCESS_KEY_SECRET>
+export S3_STORAGE_BUCKET_NAME=<AWS_S3_BUCKET_NAME>
 ```
 
-Or for convenience
-```
-alias update_mylog14='python3 manage.py makemigrations; python3 manage.py migrate; python3 manage.py runserver';  
+You need to change the according settings in `logboard/settings.py` if you don't want to use specific infrastructures like AWS CloudWatch Logging or S3.
+
+2. Install [docker compose](https://docs.docker.com/compose/) and Docker
+
+3. Start
 
 ```
-
-
-WARNING: DASHBOARD Code will be dropped and integrated to applications/archives
-
-# Deploy
-
-WIP
-
-```
-$ python3 manage.py collectstatic
+$ docker-compose up
 ```
