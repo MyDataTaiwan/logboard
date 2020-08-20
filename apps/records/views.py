@@ -22,9 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def simplify_records(records: list, template_name: str):
-    logger.warning('1')
     template = DataTemplate(template_name)
-    logger.warning(records)
     for record in records:
         record.pop('proof')
         record['vital_signs'] = {}
@@ -35,7 +33,6 @@ def simplify_records(records: list, template_name: str):
             data_group = template.get_field_attr(name, 'dataGroup')
             if not data_group:
                 data_group = field.get('dataGroup', None)
-            logger.warning(data_group)
             if data_group == 'vitalSigns':
                 record['vital_signs'][name] = value
             elif data_group == 'symptoms' or data_group == 'checklist':
