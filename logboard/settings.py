@@ -196,7 +196,7 @@ elif default_storage_backend == 's3':
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": get_env('BROKER_URL').replace('/0', '/1'),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
