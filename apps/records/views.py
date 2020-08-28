@@ -80,7 +80,7 @@ def parse_to_summary(records: list, template_name: str):
         else:
             res['id_list'][-1].append(record['id'])
             res['photo_list'][-1].append(record['photo'])
-            res['thumbnail_list'][-1].append([record['thumbnail']])
+            res['thumbnail_list'][-1].append(record['thumbnail'])
         for key, val in record['vital_signs'].items():
             if not res['vital_signs'].get(key, None):
                 res['vital_signs'][key] = []
