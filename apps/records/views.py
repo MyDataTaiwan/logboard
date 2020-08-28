@@ -58,7 +58,6 @@ def parse_to_summary(records: list, template_name: str):
             else:
                 arr[-1] = val
         return arr
-
     records = simplify_records(records, template_name)
     res = {
         'id_list': [],
@@ -75,12 +74,12 @@ def parse_to_summary(records: list, template_name: str):
         update(res['date'], date, append)
         if append:
             res['id_list'].append([record['id']])
-            res['photo_list'].append([record['photo']])
-            res['thumbnail_list'].append([record['thumbnail']])
+            res['photo_list'].append([record.get('photo')])
+            res['thumbnail_list'].append([record.get('thumbnail')])
         else:
             res['id_list'][-1].append(record['id'])
-            res['photo_list'][-1].append(record['photo'])
-            res['thumbnail_list'][-1].append(record['thumbnail'])
+            res['photo_list'][-1].append(record.get('photo'))
+            res['thumbnail_list'][-1].append(record.get('thumbnail'))
         for key, val in record['vital_signs'].items():
             if not res['vital_signs'].get(key, None):
                 res['vital_signs'][key] = []
@@ -127,8 +126,8 @@ def parse_to_today(records: list, template_name: str):
                 }
                 res['symptoms'].append(symptom)
             symptom['symptom'].append(val)
-        res['photos'].append(record['photo'])
-        res['thumbnails'].append(record['thumbnail'])
+        res['photos'].append(record.get('photo'))
+        res['thumbnails'].append(record.get('thumbnail'))
     return res
 
 
