@@ -242,7 +242,10 @@ class RecordViewSet(viewsets.ModelViewSet):
             owner__id=id, template_name__exact=template, timestamp__range=date_range
         ).order_by('timestamp')
         serializer = RecordSerializer(records, many=True)
-        res = parse_to_summary(serializer.data, template)
+        if start_date == end_date:
+            res = parse_to_today(serializer.data, template)
+        else:
+            res = parse_to_summary(serializer.data, template)
         return Response(res, status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
