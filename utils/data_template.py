@@ -24,7 +24,7 @@ class DataTemplate():
                 return json.load(f)
         except OSError as e:
             logger.critical('Failed to open data template {}'.format(filename))
-            raise
+            return None
 
     def _to_snake_case(self, string: str) -> str:
         return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
