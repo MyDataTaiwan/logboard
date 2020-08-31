@@ -22,7 +22,7 @@ class RecordSerializer(serializers.ModelSerializer):
             'proof',
             'fields',
             'photo',
-            #'thumbnail',
+            'thumbnail',
             'owner',
         ]
         read_only_fields = [
@@ -35,19 +35,11 @@ class RecordSerializer(serializers.ModelSerializer):
             'proof',
             'fields',
             'photo',
-            #'thumbnail',
+            'thumbnail',
             'owner',
         ]
 
     raw_content = serializers.CharField(write_only=True)
-    '''
-    thumbnail = HyperlinkedSorlImageField(
-        '128x128',
-        options={"crop": "center"},
-        source='photo',
-        read_only=True,
-    )
-    '''
 
 
 class RecordCreateSerializer(serializers.ModelSerializer):
