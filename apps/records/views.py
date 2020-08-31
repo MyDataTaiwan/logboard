@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+import json
 import logging
 import pytz
 
@@ -12,7 +13,7 @@ from rest_framework.response import Response
 
 from apps.records.filters import RecordFilter
 from apps.records.models import Record
-from apps.records.serializers import RecordSerializer, RecordCreateSerializer
+from apps.records.serializers import RecordSerializer, RecordCreateSerializer, TemplateSerializer
 from apps.records.tasks import parse_record
 from apps.users.models import CustomUser
 from utils.data_template import DataTemplate
@@ -325,3 +326,17 @@ class RecordViewSet(viewsets.ModelViewSet):
         serializer = RecordSerializer(records, many=True)
         res = parse_to_summary(serializer.data, template)
         return Response(res, status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path='templates')
+    def templates(self, request):
+        template = request.query_params.get('template')
+        cache_key = 'template_{}'.format(template)
+        data = cache.get(cache_key)
+        if data:
+            return Response(data, status.HTTP_200_OK)
+        serializer = TemplateSerializer(data={'template': template})
+        if serializer.is_valid():
+            cache.set(cache_key, serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
