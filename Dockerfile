@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 # Install dependencies required for psycopg2 python package
-RUN apk update && apk add libpq jpeg-dev zlib-dev
+RUN apk update && apk add libpq jpeg-dev zlib-dev boost-python3
 RUN apk update && apk add --virtual .build-deps gcc g++ python3-dev musl-dev postgresql-dev libffi-dev
 
 RUN mkdir -p /usr/src/logboard
