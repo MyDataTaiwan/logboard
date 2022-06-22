@@ -29,7 +29,7 @@ Markdown==3.2.1
 MarkupSafe==1.1.1
 mccabe==0.6.1
 niota==0.1.0
-numpy==1.18.2
+numpy==1.22.0
 pandas==1.0.3
 phx-class-registry==3.0.5
 phx-filters==2.0.2
